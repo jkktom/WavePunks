@@ -16,7 +16,12 @@ describe('WaveNFT', () => {
 
   beforeEach(async () => {
     const WaveNFT = await ethers.getContractFactory('WaveNFT')
-    nft = await WaveNFT.deploy('WaveNFT', 'WNFT', ether(10))
+    nft = await WaveNFT.deploy(
+      'WaveNFT', 
+      'WNFT', 
+      ether(10),
+      false
+    )
 
   })
 
@@ -31,6 +36,9 @@ describe('WaveNFT', () => {
     })
     it('minting cost 10 eth', async () => {
       expect(await nft.cost()).to.equal(COST)
+    })
+    it('is not borrowed', async () => {
+      expect(await nft.isBorrowed()).to.equal(false)
     })
 
   })

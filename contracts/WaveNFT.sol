@@ -5,13 +5,16 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract WaveNFT is ERC721Enumerable {
     uint256 public cost;
+    bool public isBorrowed;
 
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 _cost
+        uint256 _cost,
+        bool _isBorrowed
     ) ERC721(_name, _symbol) {
         cost = _cost;
+        isBorrowed = _isBorrowed;
     }
 
     
