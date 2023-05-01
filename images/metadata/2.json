@@ -1,0 +1,15 @@
+{
+  "name": "Wave #2",
+  "description": "Sprinkles under Big sun",
+  "image": "https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/2.png",
+  "attributes": [
+    {
+      "trait_type": "Wave Color",
+      "value": "swirly"
+    },
+    {
+      "trait_type": "Background",
+      "value": "sparkling particles"
+    }
+  ]
+}

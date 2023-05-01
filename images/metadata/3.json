@@ -1,0 +1,15 @@
+{
+  "name": "Wave #3",
+  "description": "Wave becomes mountains",
+  "image": "https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/3.png",
+  "attributes": [
+    {
+      "trait_type": "Wave Color",
+      "value": "big mountain"
+    },
+    {
+      "trait_type": "Background",
+      "value": "blurry expression"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Wave #5",
+  "description": "Mushroom clouds and Yellow Mountain",
+  "image": "https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/5.png",
+  "attributes": [
+    {
+      "trait_type": "Painting style",
+      "value": "Pointillism"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Mushroom cloud"
+    },
+    {
+      "trait_type": "Mountain",
+      "value": "Yellow"
+    }
+  ]
+}

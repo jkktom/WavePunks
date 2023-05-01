@@ -1,0 +1,15 @@
+{
+  "name": "Wave #1",
+  "description": "Wave of beers",
+  "image": "https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/1.png",
+  "attributes": [
+    {
+      "trait_type": "Wave Color",
+      "value": "Yellow"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Van Gogh style"
+    }
+  ]
+}
