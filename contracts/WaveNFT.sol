@@ -63,8 +63,15 @@ contract WaveNFT is ERC721Enumerable, Ownable {
         require(_exists(_tokenId), 'token does not exist');
         return(string(abi.encodePacked(baseURI, _tokenId.toString(), baseExtension)));
     }
-    
-    // Your custom minting function and other logic here
+
+    function walletOfOwner(address _owner) public view returns(uint256[] memory) {
+        uint256 ownerTokenCount = balanceOf(_owner);
+        uint256[] memory tokenIds = new uint256[](ownerTokenCount);
+        for(uint256 i; i < ownerTokenCount; i++) {
+            tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
+        }
+        return tokenIds;
+    }
 }
 
 
