@@ -7,16 +7,19 @@
 const hre = require("hardhat");
 
 async function main() {
-  const NAME = 'Dapp University'
-  const SYMBOL = 'DAPP'
-  const MAX_SUPPLY = '1000000'
+  const NAME = 'WaveNFT'
+  const SYMBOL = 'WNFT'
+  const COST = ethers.utils.parseUnits('10', 'ether')
+  const MAX_SUPPLY = 15
+  const NFT_MINT_DATE = 1682994263
+  const IPFS_METADATA_URI = 'https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmeqrB4mogTGtAmn1TDAvEUKpPTRUsjBZAaagyK7hp5vPv/'
 
-  // Deploy Token
-  const Token = await hre.ethers.getContractFactory('Token')
-  let token = await Token.deploy(NAME, SYMBOL, MAX_SUPPLY)
+  // Deploy NFT
+  const NFT = await hre.ethers.getContractFactory('WaveNFT')
+  let nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, NFT_MINT_DATE, IPFS_METADATA_URI)
 
-  await token.deployed()
-  console.log(`Token deployed to: ${token.address}\n`)
+  await nft.deployed()
+  console.log(`NFT deployed to: ${nft.address}\n`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
