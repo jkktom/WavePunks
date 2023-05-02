@@ -14,32 +14,31 @@ describe('WaveNFT', () => {
   let nft
 
 
-  beforeEach(async () => {
-    const WaveNFT = await ethers.getContractFactory('WaveNFT')
-    nft = await WaveNFT.deploy(
-      'WaveNFT', 
-      'WNFT', 
-      ether(10),
-      false
-    )
-
-  })
 
   describe('Deployment', () => {
 
-    it('has correct name', async () => {
-      expect(await nft.name()).to.equal(NAME)
+    beforeEach(async () => {
+      const WaveNFT = await ethers.getContractFactory('WaveNFT')
+      nft = await WaveNFT.deploy(
+        'WaveNFT', 
+        'WNFT', 
+        ether(10),
+        false
+      )
     })
+      it('has correct name', async () => {
+        expect(await nft.name()).to.equal(NAME)
+      })
 
-    it('has correct symbol', async () => {
-      expect(await nft.symbol()).to.equal(SYMBOL)
-    })
-    it('minting cost 10 eth', async () => {
-      expect(await nft.cost()).to.equal(COST)
-    })
-    it('is not borrowed', async () => {
-      expect(await nft.isBorrowed()).to.equal(false)
-    })
+      it('has correct symbol', async () => {
+        expect(await nft.symbol()).to.equal(SYMBOL)
+      })
+      it('minting cost 10 eth', async () => {
+        expect(await nft.cost()).to.equal(COST)
+      })
+      it('is not borrowed', async () => {
+        expect(await nft.isBorrowed()).to.equal(false)
+      })
 
   })
 
