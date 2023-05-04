@@ -10,7 +10,8 @@ describe("WaveNFT", function () {
   let addr3;
   let addrs;
 
-  const tokenId = 1;
+  const tokenId1 = 1;
+  const tokenId2 = 2;
 
   beforeEach(async () => {
     WaveNFT = await ethers.getContractFactory("WaveNFT");
@@ -62,7 +63,7 @@ describe("WaveNFT", function () {
 
   describe("WaveNFT Lending and Returning", function () {
     beforeEach(async () => {
-      await waveNFT.connect(addr1).mint(1, { value: ethers.utils.parseEther("0.01") });
+      await waveNFT.connect(addr1).mint(2, { value: ethers.utils.parseEther("0.02") });
     });
 
     it("Should create a lending offer", async function () {
@@ -71,9 +72,9 @@ describe("WaveNFT", function () {
       const lendingExpiration = lendingStartTime + 60 * 60;
       const redemptionPeriod = 60 * 60 * 24;
 
-      await waveNFT.connect(addr1).createLendingOffer(tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+      await waveNFT.connect(addr1).createLendingOffer(tokenId1, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
 
-      const offer = await waveNFT.lendingOffers(tokenId);
+      const offer = await waveNFT.lendingOffers(tokenId1);
 
       expect(offer.deposit).to.equal(deposit);
       expect(offer.lendingStartTime).to.equal(lendingStartTime);
@@ -87,11 +88,11 @@ describe("WaveNFT", function () {
       const lendingExpiration = lendingStartTime + 60 * 60;
       const redemptionPeriod = 60 * 60 * 24;
 
-      await waveNFT.connect(addr1).createLendingOffer(tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+      await waveNFT.connect(addr1).createLendingOffer(tokenId1, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
 
-      await waveNFT.connect(addr1).cancelLendingOffer(tokenId);
+      await waveNFT.connect(addr1).cancelLendingOffer(tokenId1);
 
-      const offer = await waveNFT.lendingOffers(tokenId);
+      const offer = await waveNFT.lendingOffers(tokenId1);
       expect(offer.isActive).to.equal(false);
     });
 
@@ -101,19 +102,58 @@ describe("WaveNFT", function () {
       const lendingExpiration = lendingStartTime + (60 * 60);
       const redemptionPeriod = 60 * 60 * 24;
 
-      await waveNFT.connect(addr1).createLendingOffer(tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+      await waveNFT.connect(addr1).createLendingOffer(tokenId1, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+      const offer1 = await waveNFT.lendingOffers(tokenId1);  
+      console.log(`Lending offer for tokenId1: ${tokenId1}`);
 
-      await waveNFT.connect(addr2).borrowNFT(tokenId, { value: deposit });
+      await waveNFT.connect(addr2).borrowNFT(tokenId1, { value: deposit });
+      const ownerAfterBorrowing = await waveNFT.ownerOf(tokenId1);
+      console.log(`Owner of the NFT after borrowing: ${ownerAfterBorrowing}`);
+      expect(ownerAfterBorrowing).to.equal(addr2.address);
 
       // Simulate the passage of time for lendingExpiration to be reached
       await ethers.provider.send("evm_increaseTime", [60 * 60]);
       await ethers.provider.send("evm_mine");
 
-      await waveNFT.connect(addr1).redeemNFT(tokenId, { value: deposit });
+      await waveNFT.connect(addr1).redeemNFT(tokenId1, { value: deposit });
 
-      const offer = await waveNFT.lendingOffers(tokenId);
+      const offer = await waveNFT.lendingOffers(tokenId1);
       expect(offer.isActive).to.equal(false);
       expect(offer.borrower).to.equal(ethers.constants.AddressZero);
+
+      const ownerAfterRedeem = await waveNFT.ownerOf(tokenId1);
+      console.log(`Owner of the NFT after Redeem: ${ownerAfterRedeem}`);
+      expect(ownerAfterRedeem).to.equal(addr1.address);
+    });
+
+    it("Should allow seizing a lent NFT", async function () {
+      const deposit = ethers.utils.parseEther("0.1");
+      const lendingStartTime = Math.floor(Date.now() / 1000);
+      const lendingExpiration = lendingStartTime + (60 * 60 * 4);
+      const redemptionPeriod = 60 * 60 * 12;
+
+      await waveNFT.connect(addr1).createLendingOffer(tokenId2, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+      const offer2 = await waveNFT.lendingOffers(tokenId2);  
+      console.log(`Lending offer for tokenId2: ${tokenId2}`);
+
+      await waveNFT.connect(addr3).borrowNFT(tokenId2, { value: deposit });
+      const ownerAfterBorrowing = await waveNFT.ownerOf(tokenId2);
+      console.log(`Owner of the NFT after borrowing: ${ownerAfterBorrowing}`);
+      expect(ownerAfterBorrowing).to.equal(addr3.address);
+
+      // Simulate the passage of time for redemption deadline to be passed
+      await ethers.provider.send("evm_increaseTime", [(60 * 60 * 24)]);
+      await ethers.provider.send("evm_mine");
+
+      await waveNFT.connect(addr3).seizeNFT(tokenId2);
+      const ownerAfterSeize = await waveNFT.ownerOf(tokenId2);
+      console.log(`Owner of the NFT after Seize: ${ownerAfterSeize}`);
+      expect(ownerAfterSeize).to.equal(addr3.address);
+
+      expect(await waveNFT.ownerOf(tokenId2)).to.equal(addr3.address);
+      await waveNFT.connect(addr3).createLendingOffer(tokenId2, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+      const offer2_again = await waveNFT.lendingOffers(tokenId2);  
+      console.log(`Lending offer owner for tokenId2: ${offer2_again.owner}`);
     });
   });
 

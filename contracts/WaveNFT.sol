@@ -188,58 +188,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         emit LendingOfferCanceled(tokenId, offer.isActive);
     }
 
-    // function returnLentNFT(uint256 tokenId) public payable {
-    //     LendingOffer storage offer = lendingOffers[tokenId];
-    //     require(block.timestamp >= offer.lendingExpiration, "Not yet expired");
-    //     require(offer.borrower == msg.sender, "Not the borrower");
-    //     require(msg.value == offer.deposit, "Insufficient deposit return");
-
-    //     uint256 redemptionDeadline = offer.lendingExpiration + offer.redemptionPeriod;
-    //     require(block.timestamp <= redemptionDeadline, "Redemption deadline passed");
-
-    //     transferFrom(msg.sender, offer.owner, tokenId);
-
-    //     payable(msg.sender).transfer(offer.deposit);
-
-    //     offer.isActive = false;
-    // }
-
-    // function redeemNFT(uint256 tokenId) public payable {
-    //     LendingOffer storage offer = lendingOffers[tokenId];
-    //     require(offer.owner == msg.sender, "Not the owner");
-    //     require(block.timestamp >= offer.lendingExpiration, "Lending period not expired");
-    //     require(msg.value == offer.deposit, "Insufficient deposit payment");
-
-    //     uint256 redemptionDeadline = offer.lendingExpiration + offer.redemptionPeriod;
-    //     require(block.timestamp <= redemptionDeadline, "Redemption deadline passed");
-
-    //     transferFrom(offer.borrower, msg.sender, tokenId);
-
-    //     // Return the deposit to the borrower
-    //     payable(offer.borrower).transfer(offer.deposit);
-
-    //     // Reset the lending offer
-    //     offer.isActive = false;
-    //     offer.borrower = address(0);
-    // }
-
-    // function redeemNFT(uint256 tokenId) public payable {
-    //     LendingOffer storage offer = lendingOffers[tokenId];
-    //     require(block.timestamp >= offer.lendingExpiration, "Not yet expired");
-    //     require(offer.owner == msg.sender, "Not the owner");
-    //     require(msg.value == offer.deposit, "Insufficient deposit");
-
-    //     uint256 redemptionDeadline = offer.lendingExpiration + offer.redemptionPeriod;
-    //     require(block.timestamp <= redemptionDeadline, "Redemption deadline passed");
-
-    //     _approve(address(this), tokenId); // Approve the contract to transfer the NFT
-    //     safeTransferFrom(offer.borrower, msg.sender, tokenId); // Transfer the NFT back to the owner
-
-    //     payable(offer.borrower).transfer(offer.deposit); // Return the deposit to the borrower
-
-    //     offer.isActive = false;
-    // }
-
     function redeemNFT(uint256 tokenId) public payable {
         LendingOffer storage offer = lendingOffers[tokenId];
         require(offer.owner == msg.sender, "Not the owner");
@@ -257,6 +205,21 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
 
         offer.isActive = false;
     }
+
+    function seizeNFT(uint256 tokenId) public {
+        LendingOffer storage offer = lendingOffers[tokenId];
+        require(offer.borrower == msg.sender, "Not the borrower");
+        require(block.timestamp > offer.lendingExpiration, "Lending period not yet expired");
+        uint256 redemptionDeadline = offer.lendingExpiration + offer.redemptionPeriod;
+        require(block.timestamp > redemptionDeadline, "Redemption deadline not yet passed");
+
+        // Transfer NFT ownership permanently to the borrower
+        _safeTransfer(offer.owner, offer.borrower, tokenId, "");
+
+        // Clear the lending offer
+        delete lendingOffers[tokenId];
+    }
+
 
 
 
