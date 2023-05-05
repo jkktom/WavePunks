@@ -31,7 +31,6 @@ describe('WaveNFT', () => {
         'WaveNFT', 
         'WNFT', 
         ether(10),
-        false,
         15,
         1682994263,
         'ipfs://QmQ2jnDYecFhrf3asEWjyjZRX1pZSsNWG3qHzmNDvXa9qg/'
@@ -74,7 +73,7 @@ describe('WaveNFT', () => {
 
       beforeEach(async () => {
         const NFT = await ethers.getContractFactory('WaveNFT')
-        nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+        nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
 
         transaction = await nft.connect(minter).mint(1, { value: COST })
         result = await transaction.wait()
@@ -114,7 +113,7 @@ describe('WaveNFT', () => {
       beforeEach(async () => {
         const ALLOW_MINTING_ON = Date.now().toString().slice(0, 10) // Now
         const NFT = await ethers.getContractFactory('WaveNFT')
-        nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+        nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
 
         transaction = await nft.connect(minter).mint(1, { value: COST })
         result = await transaction.wait()
@@ -143,7 +142,7 @@ describe('WaveNFT', () => {
       it('rejects minting before allowed time', async () => {
         const ALLOW_MINTING_ON = new Date('May 26, 2030 18:00:00').getTime().toString().slice(0, 10)
         const NFT = await ethers.getContractFactory('WaveNFT')
-        nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+        nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
 
         await expect(nft.connect(minter).mint(1, { value: COST })).to.be.reverted
       })
@@ -159,7 +158,7 @@ describe('WaveNFT', () => {
 
     beforeEach(async () => {
       const NFT = await ethers.getContractFactory('WaveNFT')
-      nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+      nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
 
       // Mint 3 nfts
       transaction = await nft.connect(minter).mint(3, { value: ether(30) })
@@ -189,7 +188,7 @@ describe('WaveNFT', () => {
 
       beforeEach(async () => {
         const NFT = await ethers.getContractFactory('WaveNFT')
-        nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+        nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
 
         transaction = await nft.connect(minter).mint(1, { value: COST })
         result = await transaction.wait()
@@ -219,7 +218,7 @@ describe('WaveNFT', () => {
       it('prevents non-owner from withdrawing', async () => {
         const ALLOW_MINTING_ON = Date.now().toString().slice(0, 10) // Now
         const NFT = await ethers.getContractFactory('WaveNFT')
-        nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
+        nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, ALLOW_MINTING_ON, BASE_URI)
         nft.connect(minter).mint(1, { value: COST })
 
         await expect(nft.connect(minter).withdraw()).to.be.reverted
