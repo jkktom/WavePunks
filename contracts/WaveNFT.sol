@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     using SafeMath for uint256;
     using Strings for uint256;
-    uint256 public redemptionPeriod;
+    // uint256 public redemptionPeriod;
     uint256 public cost;
     uint256 public maxSupply;
     uint256 public allowMintingOn;
@@ -76,6 +76,15 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     event LendingOfferCanceled(
         uint256 indexed tokenId
     );
+    event Rented(
+        uint256 indexed tokenId
+    );
+    event Seized(
+        uint256 indexed tokenId
+    );
+    event Redeemed(
+        uint256 indexed tokenId
+    );
 
 
     mapping(uint256 => LendingOffer) public lendingOffers;
@@ -117,7 +126,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     }
     // Owner functions
 
-    function withdraw() public onlyOwner {
+    function withdraw() external onlyOwner {
         uint256 balance = address(this).balance;
 
         (bool success, ) = payable(msg.sender).call{value: balance}("");
@@ -136,7 +145,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         uint256 _lendingStartTime,
         uint256 _lendingExpiration,
         uint256 _redemptionPeriod
-    ) public {
+    ) external {
         require(ownerOf(_tokenId) == msg.sender, "Not the owner");
         require(tokenStates[_tokenId] == TokenState.initialState, "Not InitialState");
         require(_lendingStartTime < _lendingExpiration, "Set lending time properly");
@@ -164,7 +173,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         );
     }
 
-    function cancelLendingOffer(uint256 tokenId) public {
+    function cancelLendingOffer(uint256 tokenId) external {
         require(tokenStates[tokenId] == TokenState.lendingOpen, "No lending offer Open");
         LendingOffer storage offer = lendingOffers[tokenId];
         require(offer.owner == msg.sender, "Not the lender");
@@ -174,7 +183,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         emit LendingOfferCanceled(tokenId);
     }
     
-    function borrowNFT(uint256 tokenId) public payable nonReentrant updateTokenState(tokenId) {
+    function borrowNFT(uint256 tokenId) external payable nonReentrant updateTokenState(tokenId) {
         //check lending is open
         TokenState tokenState = _getTokenState(tokenId);
         require(ownerOf(tokenId) != msg.sender, "borrowing from yourself");
@@ -186,6 +195,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
 
         offer.borrower = msg.sender;
         tokenStates[tokenId] = TokenState.lendingPeriod;
+        emit Rented(tokenId);
     }
 
 
@@ -199,6 +209,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         // Clear the lending offer
         delete lendingOffers[tokenId];
         tokenStates[tokenId] = TokenState.initialState;
+        emit Seized(tokenId);
     }    
 
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
@@ -224,6 +235,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     }
 
 
+
     function redeemNFT(uint256 tokenId) external payable nonReentrant updateTokenState(tokenId) {
         TokenState tokenState = _getTokenState(tokenId);
         require(tokenState == TokenState.expired, "Not yet expired");
@@ -237,10 +249,10 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
 
         tokenStates[tokenId] = TokenState.initialState;
         delete lendingOffers[tokenId];
+        emit Redeemed(tokenId);
     }
 
     function _getTokenState(uint256 tokenId) internal view returns (TokenState) {
-        require(_exists(tokenId), "ERC721: operator query for nonexistent token");
 
         LendingOffer storage offer = lendingOffers[tokenId];
         TokenState currentTokenState = tokenStates[tokenId];
@@ -263,7 +275,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         baseURI = _baseURI;
     }
 
-    function claimNFT(uint256 tokenId) public {
+    function claimNFT(uint256 tokenId) external {
         require(_exists(tokenId), "ERC721: operator query for nonexistent token");
         require(msg.sender == lendingOffers[tokenId].borrower, "Caller is not the borrower");
 
