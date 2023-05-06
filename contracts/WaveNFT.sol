@@ -146,8 +146,10 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         uint256 _lendingExpiration,
         uint256 _redemptionPeriod
     ) external {
+        TokenState tokenState = _getTokenState(_tokenId);
         require(ownerOf(_tokenId) == msg.sender, "Not the owner");
-        require(tokenStates[_tokenId] == TokenState.initialState, "Not InitialState");
+        require(tokenState == TokenState.initialState, "Not InitialState");
+        require(_lendingStartTime > block.timestamp);
         require(_lendingStartTime < _lendingExpiration, "Set lending time properly");
 
         LendingOffer memory newOffer = LendingOffer({
