@@ -38,25 +38,26 @@ describe("WaveNFT", () => {
 
     //Mint
     await waveNFT.connect(addr1).mint({ value: ethers.utils.parseEther("0.1") });
-      //Create Lending Offer
-    // await expect(
-    //   waveNFT.connect(addr1).createLendingOffer(
-    //     1, 
-    //     depositToken1, 
-    //     lendingTime,  
-    //     lendExpires, 
-    //     redemptionTime
-    //   )
-    // ).to.emit(waveNFT, "LendingOfferCreated")
-    //   .withArgs(
-    //     addr1.address, 
-    //     Math.floor(Date.now() / 1000), 
-    //     1, 
-    //     depositToken1, 
-    //     1683363988, 
-    //     1683364079, 
-    //     redemptionTime
-    //   );
+    // ssdf
+    // //   Create Lending Offer
+    // // await expect(
+    // //   waveNFT.connect(addr1).createLendingOffer(
+    // //     1, 
+    // //     depositToken1, 
+    // //     lendingTime,  
+    // //     lendExpires, 
+    // //     redemptionTime
+    // //   )
+    // // ).to.emit(waveNFT, "LendingOfferCreated")
+    // //   .withArgs(
+    // //     addr1.address, 
+    // //     Math.floor(Date.now() / 1000), 
+    // //     1, 
+    // //     depositToken1, 
+    // //     1683363988, 
+    // //     1683364079, 
+    // //     redemptionTime
+    // //   );
 
     let transaction = await waveNFT.connect(addr1).createLendingOffer(
         1, 
@@ -67,12 +68,17 @@ describe("WaveNFT", () => {
     )
     let result = await transaction.wait()
 
-    const lendingOfferCreatedEvent 
-      = result.events.find(event => event.event === "LendingOfferCreated");
-
-    // Log the event data
-    console.log(`LendingOfferCreated event data:
-     ${JSON.stringify(lendingOfferCreatedEvent.args)}`);
+    await expect(result).to.emit(waveNFT, "LendingOfferCreated")
+      .withArgs(
+        0x70997970C51812dc3A010C7d01b50e0d17dc79C8,
+        timestamp(),
+        1,
+        ethers.utils.parseEther("0.1"),
+        1683374000,
+        1683374100,
+        60
+      )
+    
 
         // ... previous code
 
