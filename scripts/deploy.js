@@ -16,7 +16,7 @@ async function main() {
 
   // Deploy NFT
   const NFT = await hre.ethers.getContractFactory('WaveNFT')
-  let nft = await NFT.deploy(NAME, SYMBOL, COST, false, MAX_SUPPLY, NFT_MINT_DATE, IPFS_METADATA_URI)
+  let nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, NFT_MINT_DATE, IPFS_METADATA_URI)
 
   await nft.deployed()
   console.log(`NFT deployed to: ${nft.address}\n`)
