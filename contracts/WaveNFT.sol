@@ -138,15 +138,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     function setCost(uint256 _newCost) public onlyOwner {
         cost = _newCost;
     }
-    event LendingOfferCreated(
-        address indexed owner,
-        uint256 indexed timestamp,
-        uint256 indexed tokenId,
-        uint256 deposit,
-        uint256 lendingStartTime,
-        uint256 lendingExpiration,
-        uint256 redemptionPeriod
-    );
+    
     function createLendingOffer(
         uint256 _tokenId,
         uint256 _deposit,
