@@ -50,8 +50,6 @@ function App() {
 
     // Initiate contract
     await loadNFT(provider, chainId, dispatch)
-    // // const nft = new ethers.Contract(config[31337].nft.address, NFT_ABI, provider)
-    // // setNFT(nft)
 
     // // Fetch Countdown
     // // const allowMintingOn = await nft.allowMintingOn()
