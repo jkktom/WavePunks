@@ -11,7 +11,7 @@ async function main() {
   const SYMBOL = 'WNFT'
   const COST = ethers.utils.parseUnits('10', 'ether')
   const MAX_SUPPLY = 15
-  const NFT_MINT_DATE = (Date.now() + 60000).toString().slice(0, 10)
+  const NFT_MINT_DATE = (Date.now() + 10000).toString().slice(0, 10)
   const IPFS_METADATA_URI = 'https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmeqrB4mogTGtAmn1TDAvEUKpPTRUsjBZAaagyK7hp5vPv/'
 
   // Deploy NFT
