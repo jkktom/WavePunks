@@ -15,14 +15,10 @@ import Loading from './Loading';
 import {
   loadProvider,
   loadNetwork,
-  loadAccount
+  loadAccount,
+  loadNFT
 } from '../store/interactions'
 
-// ABIs: Import your contract ABIs here
-import NFT_ABI from '../abis/WaveNFT.json'
-
-// Config: Import your network config here
-import config from '../config.json';
 
 function App() {
   const dispatch = useDispatch()
@@ -53,21 +49,22 @@ function App() {
     await loadAccount(dispatch)
 
     // Initiate contract
-    const nft = new ethers.Contract(config[31337].nft.address, NFT_ABI, provider)
-    setNFT(nft)
+    await loadNFT(provider, chainId, dispatch)
+    // // const nft = new ethers.Contract(config[31337].nft.address, NFT_ABI, provider)
+    // // setNFT(nft)
 
-    // Fetch Countdown
-    const allowMintingOn = await nft.allowMintingOn()
-    setRevealTime(allowMintingOn.toString() + '000')
+    // // Fetch Countdown
+    // // const allowMintingOn = await nft.allowMintingOn()
+    // // setRevealTime(allowMintingOn.toString() + '000')
 
-    // Fetch maxSupply
-    setMaxSupply(await nft.maxSupply())
+    // // Fetch maxSupply
+    // setMaxSupply(await nft.maxSupply())
 
-    // Fetch totalSupply
-    setTotalSupply(await nft.totalSupply())
+    // // Fetch totalSupply
+    // setTotalSupply(await nft.totalSupply())
 
-    // Fetch cost
-    setCost(await nft.cost())
+    // // Fetch cost
+    // setCost(await nft.cost())
 
     // // Fetch account balance
     // setBalance(await nft.balanceOf(account))

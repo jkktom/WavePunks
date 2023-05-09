@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import provider from './reducers/provider'
-import waveNFT from './reducers/waveNFT'
+import nft from './reducers/waveNFT'
 
 export const store = configureStore({
   reducer: {
-    provider
-    // waveNFT
+    provider,
+    nft
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
