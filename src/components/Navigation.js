@@ -20,6 +20,12 @@ const Navigation = () => {
     const account = await loadAccount(dispatch)
     // await loadBalances(nft, account, dispatch)
   }
+  const networkHandler = async (e) => {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: e.target.value }],
+    })
+  }
   return (
     <Navbar className='my-3'>
       <img
@@ -31,7 +37,20 @@ const Navigation = () => {
       />
       <Navbar.Brand href="#">Wave NFTs</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
-        {account ? (
+        
+        <div className="d-flex justify-content-end mt-3">
+          <Form.Select
+            aria-label="Network Selector"
+            value={config[chainId] ? `0x${chainId.toString(16)}` : `0`}
+            onChange={networkHandler}
+            style={{ maxWidth: '200px', marginRight: '20px' }}
+          >
+            <option value="0" disabled>Select Network</option>
+            <option value="0x7A69">Localhost</option>
+            <option value="0x5">Goerli</option>
+            <option value="0x5">Mumbai</option>
+          </Form.Select>
+          {account ? (
             <Navbar.Text className='d-flex align-items-center'>
               {account.slice(0, 5) + '...' + account.slice(38, 42)}
               <Blockies
@@ -47,6 +66,8 @@ const Navigation = () => {
           ) : (
             <Button onClick={connectHandler}>Connect</Button>
           )}
+        </div>
+        
       </Navbar.Collapse>
     </Navbar>
   );

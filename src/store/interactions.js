@@ -7,8 +7,8 @@ import {
 } from './reducers/provider'
 
 import {
-  setContract
-} from './reducers/waveNFT'
+  setNFT
+} from './reducers/nft'
 
 import NFT_ABI from '../abis/WaveNFT.json';
 import config from '../config.json';
@@ -41,7 +41,7 @@ export const loadAccount = async (dispatch) => {
 export const loadNFT = async (provider, chainId, dispatch) => {
   const nft = new ethers.Contract(config[chainId].nft.address, NFT_ABI, provider)
 
-  dispatch(setContract(nft))
+  dispatch(setNFT(nft))
 
   return nft
 }
