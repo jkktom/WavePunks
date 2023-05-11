@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
-    using SafeMath for uint256;
+    // using SafeMath for uint256;
     using Strings for uint256;
     // uint256 public redemptionPeriod;
     uint256 public cost;

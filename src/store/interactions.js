@@ -8,9 +8,13 @@ import {
 
 import {
   setNFT,
+  offersLoaded,
   createRequest,
   createSuccess,
-  createFail
+  createFail,
+  cancelRequest,
+  cancelSuccess,
+  cancelFail
 } from './reducers/nft'
 
 import NFT_ABI from '../abis/WaveNFT.json';
@@ -65,3 +69,35 @@ export const createLendingOffer = async (provider, nft, tokenId, deposit, lendin
   }
   
 };
+
+// ------------------------------------------------------------------------------
+// LOAD ALL OFFERS
+
+export const loadAllOffers = async (provider, nft, dispatch) => {
+  const block = await provider.getBlockNumber()
+
+  const offerStream = await nft.queryFilter('LendingOfferCreated', 0, block)
+  const offers = offerStream.map(event => {
+    return { hash: event.transactionHash, args:event.args}
+  })
+
+  dispatch(offersLoaded(offers))
+}
+// ------------------------------------------------------------------------------
+// Cancel Lending OFFERS
+
+export const cancelLendingOffer = async (provider, nft, tokenId, dispatch) => {
+  try {
+    dispatch(cancelRequest())
+    const signer = await provider.getSigner()
+    const transaction = await nft.connect(signer).cancelLendingOffer(tokenId);
+    await transaction.wait()
+    dispatch(cancelSuccess(transaction.hash))
+  } catch (error) {
+    dispatch(cancelFail())
+  }
+};
+
+
+
+

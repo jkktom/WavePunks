@@ -23,15 +23,15 @@ const CreateOffer = () => {
 	
 	const nft = useSelector(state => state.nft.contract);
 	const isCreating = useSelector(state => state.nft.creating.isCreating);
-	const isSucccess = useSelector(state => state.nft.creating.isSucccess);
+	const isSuccess = useSelector(state => state.nft.creating.isSuccess);
 	const transactionHash = useSelector(state => state.nft.creating.transactionHash);
   const dispatch = useDispatch()	
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // console.log('Creating lending offer with parameters:', tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
     try {
-    	await createLendingOffer(provider, nft, tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod, dispatch);
+    	const depositWei = ethers.utils.parseUnits(deposit, 'ether');
+    	await createLendingOffer(provider, nft, tokenId, depositWei, lendingStartTime, lendingExpiration, redemptionPeriod, dispatch);
 	    alert('Lending offer created successfully');
     } catch (error) {
       console.error('Error creating lending offer:', error);

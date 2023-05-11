@@ -8,9 +8,15 @@ export const nft = createSlice({
     maxSupply: 0,
     allowMintingOn: 0,
     baseURI: '',
+    offers:[],
     creating: {
       isCreating: false,
-      isSucccess: false,
+      isSuccess: false,
+      transactionHash: null
+    },
+    canceling: {
+      isCanceling: false,
+      isSuccess: false,
       transactionHash: null
     },
   },
@@ -30,6 +36,9 @@ export const nft = createSlice({
     setBaseURI: (state, action) => {
       state.baseURI = action.payload
     },
+    offersLoaded: (state, action) => {
+      state.offers = action.payload
+    },
     createRequest: (state, action) => {
       state.creating.isCreating = true
       state.creating.isSuccess = false
@@ -44,6 +53,21 @@ export const nft = createSlice({
       state.creating.isCreating = false
       state.creating.isSuccess = false
       state.creating.transactionHash = null
+    },
+    cancelRequest: (state, action) => {
+      state.canceling.isCanceling = true
+      state.canceling.isSuccess = false
+      state.canceling.transactionHash = null
+    },
+    cancelSuccess: (state, action) => {
+      state.canceling.isCanceling = false
+      state.canceling.isSuccess = true
+      state.canceling.transactionHash = action.payload
+    },
+    cancelFail: (state, action) => {
+      state.canceling.isCanceling = false
+      state.canceling.isSuccess = false
+      state.canceling.transactionHash = null
     }
   }
 })
@@ -56,9 +80,13 @@ export const {
   setMaxSupply, 
   setAllowMintingOn, 
   setBaseURI,
+  offersLoaded,
   createRequest,
   createSuccess,
-  createFail
+  createFail,
+  cancelRequest,
+  cancelSuccess,
+  cancelFail
 } = nft.actions;
 
 export default nft.reducer;

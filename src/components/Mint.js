@@ -46,7 +46,6 @@ const Mint = () => {
     setRevealTime(allowMintingOn.toString() + '000')
   }
 
-
   useEffect(() => {
     if(account && nft) {
       getMaxSupply();
