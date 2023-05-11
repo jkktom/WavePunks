@@ -1,10 +1,12 @@
+import { ethers } from 'ethers'
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import Card from 'react-bootstrap/Card';
 import Data from './Data';
 import { Container, Row, Col } from 'react-bootstrap'
-import { ethers } from 'ethers'
 
+import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 
 import {
   loadProvider,
@@ -13,8 +15,6 @@ import {
   loadNFT
 } from '../store/interactions'
 
-import Button from 'react-bootstrap/Button';
-import Spinner from 'react-bootstrap/Spinner';
 // IMG
 import preview from '../preview.gif';
 

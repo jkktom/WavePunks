@@ -7,7 +7,10 @@ import {
 } from './reducers/provider'
 
 import {
-  setNFT
+  setNFT,
+  createRequest,
+  createSuccess,
+  createFail
 } from './reducers/nft'
 
 import NFT_ABI from '../abis/WaveNFT.json';
@@ -40,8 +43,25 @@ export const loadAccount = async (dispatch) => {
 
 export const loadNFT = async (provider, chainId, dispatch) => {
   const nft = new ethers.Contract(config[chainId].nft.address, NFT_ABI, provider)
-
+  // console.log('Loaded NFT contract:', nft);
   dispatch(setNFT(nft))
 
   return nft
 }
+
+// ------------------------------------------------------------------------------
+// CREATE LENDING OFFER
+
+export const createLendingOffer = async (provider, nft, tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod, dispatch) => {
+  try {
+    dispatch(createRequest())
+    let transaction
+      const signer = await provider.getSigner()
+    transaction = await nft.connect(signer).createLendingOffer(tokenId, deposit, lendingStartTime, lendingExpiration, redemptionPeriod);
+    await transaction.wait()
+    dispatch(createSuccess(transaction.hash))
+  } catch (error) {
+    dispatch(createFail())
+  }
+  
+};

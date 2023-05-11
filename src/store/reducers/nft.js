@@ -8,6 +8,11 @@ export const nft = createSlice({
     maxSupply: 0,
     allowMintingOn: 0,
     baseURI: '',
+    creating: {
+      isCreating: false,
+      isSucccess: false,
+      transactionHash: null
+    },
   },
   reducers: {
     setNFT: (state, action) => {
@@ -25,6 +30,21 @@ export const nft = createSlice({
     setBaseURI: (state, action) => {
       state.baseURI = action.payload
     },
+    createRequest: (state, action) => {
+      state.creating.isCreating = true
+      state.creating.isSuccess = false
+      state.creating.transactionHash = null
+    },
+    createSuccess: (state, action) => {
+      state.creating.isCreating = false
+      state.creating.isSuccess = true
+      state.creating.transactionHash = action.payload
+    },
+    createFail: (state, action) => {
+      state.creating.isCreating = false
+      state.creating.isSuccess = false
+      state.creating.transactionHash = null
+    }
   }
 })
 
@@ -35,7 +55,10 @@ export const {
   setCost, 
   setMaxSupply, 
   setAllowMintingOn, 
-  setBaseURI 
+  setBaseURI,
+  createRequest,
+  createSuccess,
+  createFail
 } = nft.actions;
 
 export default nft.reducer;

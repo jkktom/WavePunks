@@ -27,10 +27,12 @@ import {
 function App() {
 
   const dispatch = useDispatch()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   const loadBlockchainData = async () => {
+    setIsLoading(true)
     // Initiate provider
+
     // Fetch current network's chainId (e.g. hardhat: 31337, kovan: 42)
     const provider = await loadProvider(dispatch)
     const chainId = await loadNetwork(provider, dispatch)
@@ -57,7 +59,7 @@ function App() {
   }
 
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
       loadBlockchainData()
     }
   }, [isLoading]);
