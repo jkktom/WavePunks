@@ -34,6 +34,16 @@ const Borrow = () => {
     }
   };
 
+  const borrowHandler = async (tokenId) => {
+    try {
+      await borrowNFT(provider, nft, tokenId, dispatch);
+      alert('Successfully Borrowed NFT ');
+    } catch (error) {
+      console.error('Error Borrwing:', error);
+      alert('Error Borrowing');
+    }
+  };
+
   const cancelHandler = async (event) => {
     event.preventDefault();
     try {
@@ -51,7 +61,7 @@ const Borrow = () => {
     }
   }, [provider, nft, dispatch]);
 
-  const centerMiddleStyle = {
+  const css = {
 	  textAlign: 'center',
 	  verticalAlign: 'middle',
 	};
@@ -62,23 +72,23 @@ const Borrow = () => {
         <Table striped bordered hover style={{ textAlign: 'center' }}>
           <thead>
             <tr>
-						  <th style={centerMiddleStyle}>Transaction <br /> Hash</th>
-						  <th style={centerMiddleStyle}>Token <br /> ID</th>
-						  <th style={centerMiddleStyle}>Deposit for <br /> Borrowing</th>
-						  <th style={centerMiddleStyle}>Lending <br /> Start Time</th>
-						  <th style={centerMiddleStyle}>Lending <br /> Expiration Time</th>
-						  <th style={centerMiddleStyle}>Redemption <br /> Duration</th>
-						  <th style={centerMiddleStyle}>Borrow <br /> Offer</th>
-						  <th style={centerMiddleStyle}>Cancel <br /> Offer</th>
+						  <th style={css}>Transaction <br /> Hash</th>
+						  <th style={css}>Token <br /> ID</th>
+						  <th style={css}>Deposit for <br /> Borrowing</th>
+						  <th style={css}>Lending <br /> Start Time</th>
+						  <th style={css}>Lending <br /> Expiration Time</th>
+						  <th style={css}>Redemption <br /> Duration</th>
+						  <th style={css}>Borrow <br /> Offer</th>
+						  <th style={css}>Cancel <br /> Offer</th>
 						</tr>
           </thead>
           <tbody>
             {offers && offers.map((offer, index) => (
               <tr key={index}>
-                <td style={centerMiddleStyle}>{offer.hash.slice(0, 5) + '...' + offer.hash.slice(61, 66)}</td>
-						    <td style={centerMiddleStyle}>{offer.args.tokenId.toString()}</td>
-						    <td style={centerMiddleStyle}>{ethers.utils.formatUnits(offer.args.deposit.toString(), 'ether')}</td>
-						    <td style={centerMiddleStyle}>{new Date(Number(offer.args.lendingStartTime.toString() + '000')).toLocaleDateString(
+                <td style={css}>{offer.hash.slice(0, 5) + '...' + offer.hash.slice(61, 66)}</td>
+						    <td style={css}>{offer.args.tokenId.toString()}</td>
+						    <td style={css}>{ethers.utils.formatUnits(offer.args.deposit.toString(), 'ether')}</td>
+						    <td style={css}>{new Date(Number(offer.args.lendingStartTime.toString() + '000')).toLocaleDateString(
 						        undefined,
 						        {
 						          year: 'numeric',
@@ -90,7 +100,7 @@ const Borrow = () => {
 						        }
 						      )}
 						    </td>
-						    <td style={centerMiddleStyle}>{new Date(Number(offer.args.lendingExpiration.toString() + '000')).toLocaleDateString(
+						    <td style={css}>{new Date(Number(offer.args.lendingExpiration.toString() + '000')).toLocaleDateString(
 							        undefined,
 							        {
 							          year: 'numeric',
@@ -102,15 +112,15 @@ const Borrow = () => {
 							        }
 							      )}
 							  </td>
-						    <td style={centerMiddleStyle}>
+						    <td style={css}>
 								  {Math.floor(offer.args.redemptionPeriod.toNumber() / 60)} minutes
 								  {' '}   
 								  {offer.args.redemptionPeriod.toNumber() % 60} seconds
 								</td>
-						    <td style={centerMiddleStyle}>
-						    	<Button>Borrow</Button>
+						    <td style={css}>
+						    	<Button onClick={() => borrowHandler(offer.args.tokenId.toString())}>Borrow</Button>
 								</td>
-						    <td style={centerMiddleStyle}>
+						    <td style={css}>
 						    	<Button onClick={() => cancelOffer(offer.args.tokenId.toString())}>Cancel</Button>
 								</td>
               </tr>

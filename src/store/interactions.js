@@ -83,6 +83,7 @@ export const loadAllOffers = async (provider, nft, dispatch) => {
 
   dispatch(offersLoaded(offers))
 }
+
 // ------------------------------------------------------------------------------
 // Cancel Lending OFFERS
 
@@ -95,6 +96,22 @@ export const cancelLendingOffer = async (provider, nft, tokenId, dispatch) => {
     dispatch(cancelSuccess(transaction.hash))
   } catch (error) {
     dispatch(cancelFail())
+  }
+};
+
+
+// ------------------------------------------------------------------------------
+// Borrow Lending OFFERS
+
+export const borrowNFT = async (provider, nft, tokenId, dispatch) => {
+  try {
+    dispatch(borrowRequest())
+    const signer = await provider.getSigner()
+    const transaction = await nft.connect(signer).borrowNFT(tokenId);
+    await transaction.wait()
+    dispatch(borrowSuccess(transaction.hash))
+  } catch (error) {
+    dispatch(borrowFail())
   }
 };
 

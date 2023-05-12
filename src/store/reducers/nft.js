@@ -19,6 +19,11 @@ export const nft = createSlice({
       isSuccess: false,
       transactionHash: null
     },
+    borrowing: {
+      isBorrowing: false,
+      isSuccess: false,
+      transactionHash: null
+    },
   },
   reducers: {
     setNFT: (state, action) => {
@@ -68,6 +73,21 @@ export const nft = createSlice({
       state.canceling.isCanceling = false
       state.canceling.isSuccess = false
       state.canceling.transactionHash = null
+    },
+    borrowRequest: (state, action) => {
+      state.borrowing.isBorrowing = true
+      state.borrowing.isSuccess = false
+      state.borrowing.transactionHash = null
+    },
+    borrowSuccess: (state, action) => {
+      state.borrowing.isBorrowing = false
+      state.borrowing.isSuccess = true
+      state.borrowing.transactionHash = action.payload
+    },
+    borrowFail: (state, action) => {
+      state.borrowing.isBorrowing = false
+      state.borrowing.isSuccess = false
+      state.borrowing.transactionHash = null
     }
   }
 })
@@ -86,7 +106,10 @@ export const {
   createFail,
   cancelRequest,
   cancelSuccess,
-  cancelFail
+  cancelFail,
+  borrowRequest,
+  borrowSuccess,
+  borrowFail
 } = nft.actions;
 
 export default nft.reducer;
