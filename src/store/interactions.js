@@ -14,7 +14,10 @@ import {
   createFail,
   cancelRequest,
   cancelSuccess,
-  cancelFail
+  cancelFail,
+  borrowRequest,
+  borrowSuccess,
+  borrowFail
 } from './reducers/nft'
 
 import NFT_ABI from '../abis/WaveNFT.json';

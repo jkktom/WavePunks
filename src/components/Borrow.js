@@ -12,7 +12,8 @@ import Loading from './Loading';
 
 import {
   loadAllOffers,
-  cancelLendingOffer
+  cancelLendingOffer,
+  borrowNFT
 } from '../store/interactions'
 
 const Borrow = () => {
@@ -44,20 +45,9 @@ const Borrow = () => {
     }
   };
 
-  const cancelHandler = async (event) => {
-    event.preventDefault();
-    try {
-    	await cancelLendingOffer(provider, nft, tokenId, dispatch);
-	    alert('Lending offer created successfully');
-    } catch (error) {
-      console.error('Error creating lending offer:', error);
-      alert('Error creating lending offer');
-    }
-  };
-
   useEffect(() => {
     if (provider && nft) {
-      loadAllOffers(provider, nft, dispatch); // You'll need to implement loadAllOffers
+      loadAllOffers(provider, nft, dispatch);
     }
   }, [provider, nft, dispatch]);
 
