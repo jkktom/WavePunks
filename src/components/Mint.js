@@ -1,74 +1,69 @@
-import { ethers } from 'ethers'
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import Card from 'react-bootstrap/Card';
-import Data from './Data';
-import { Container, Row, Col } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
+import { ethers } from 'ethers'
 
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 import {
-  loadProvider,
-  loadNetwork,
   loadAccount,
-  loadNFT
+  mint,
+  loadMaxSupply, 
+  loadTotalSupply, 
+  loadCost, 
+  loadUserBalance
 } from '../store/interactions'
 
 // IMG
 import preview from '../preview.gif';
 
 const Mint = () => {
-
-  const dispatch = useDispatch()
-  const [isWaiting, setIsWaiting] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [revealTime, setRevealTime] = useState(0)
-  const [maxSupply, setMaxSupply] = useState(0)
-  const [totalSupply, setTotalSupply] = useState(0)
-  const [cost, setCost] = useState(0)
-  const [balance, setBalance] = useState(0)
-  const imageUrl = balance > 0
-    ? `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply).toString()}.png`
-    : `../preview.gif`
-
+  const provider = useSelector(state => state.provider.connection)
   const account  = useSelector(state => state.provider.account)
   const nft = useSelector(state => state.nft.contract)
 
-  const getMaxSupply  = async ()=> {
-    setMaxSupply(await nft.maxSupply())
-    setTotalSupply(await nft.totalSupply())
-    setCost(await nft.cost())
-    setBalance(await nft.balanceOf(account))
+  const maxSupply = useSelector(state => state.nft.maxSupply)
+  const totalSupply = useSelector(state => state.nft.totalSupply)
+  const cost = useSelector(state => state.nft.cost)
+  const userBalance = useSelector(state => state.nft.userBalance)
+
+  const [isWaiting, setIsWaiting] = useState(false)
+  // const [isLoading, setIsLoading] = useState(true)
+  // const [revealTime, setRevealTime] = useState(0)
+  
+  const imageUrl = userBalance > 0
+    ? `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply).toString()}.png`
+    : `../preview.gif`
+
+  const dispatch = useDispatch()
+
+  const loadData  = async ()=> {
+    // Fetch account
     // Fetch maxSupply,totalSupply,cost,account balance
-    // // Fetch Countdown
-    const allowMintingOn = await nft.allowMintingOn()
-    setRevealTime(allowMintingOn.toString() + '000')
+    const account = await loadAccount(dispatch);
+    await loadMaxSupply(provider, nft, dispatch);
+    await loadTotalSupply(provider, nft, dispatch);
+    await loadCost(provider, nft, dispatch);
+    await loadUserBalance(provider, nft, account, dispatch);
   }
 
   useEffect(() => {
     if(account && nft) {
-      getMaxSupply();
+      loadData();
     }
   }, [account, nft]);
 
   const handleMint = async (e) => {
     e.preventDefault();
     setIsWaiting(true);
-    const provider = await loadProvider(dispatch)
     try {
-      const currentCost = await nft.cost();
-      const signer = await provider.getSigner();
-      const transaction = await nft.connect(signer).mint({ value: currentCost });
-      await transaction.wait();
-
-      // Save the connected account address in the localStorage
-      localStorage.setItem("connectedAccount", account);
-
+      await mint(provider, nft, dispatch);
+      alert('Minting success');
       // Refresh the page after successful minting
       window.location.reload();
     } catch {
-      window.alert("User rejected or transaction reverted");
+      window.alert("Mint reverted");
       setIsWaiting(false);
     }
   };
@@ -77,7 +72,7 @@ const Mint = () => {
     <>
       <Row>
         <Col>
-          {balance > 0 ? (
+          {userBalance > 0 ? (
             <div className='text-center'>
               <img
                 src={imageUrl}
@@ -93,12 +88,11 @@ const Mint = () => {
 
         <Col>
           <div className='text-center'>
-            <Data
-              maxSupply={maxSupply}
-              totalSupply={totalSupply}
-              cost={cost}
-              balance={balance}
-            />
+            <div className='text-center'>
+              <p><strong>Available to Mint:</strong> {maxSupply - totalSupply}</p>
+              <p><strong>Cost to Mint:</strong> {ethers.utils.formatUnits(cost, 'ether')} ETH</p>
+              <p><strong>You own:</strong> {userBalance.toString()}</p>
+            </div>
             <div>
               {isWaiting ? (
                 <Spinner

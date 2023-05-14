@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { HashRouter, Routes, Route } from 'react-router-dom'
-import { Container, Row, Col } from 'react-bootstrap'
-import { ethers } from 'ethers'
-
-// IMG
-import preview from '../preview.gif';
+import { Container, } from 'react-bootstrap'
 
 // Components
 import Navigation from './Navigation';
@@ -14,7 +10,6 @@ import Mint from './Mint';
 import Borrow from './Borrow';
 import CreateOffer from './CreateOffer';
 import Status from './Status';
-import Data from './Data';
 
 import {
   loadProvider,

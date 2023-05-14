@@ -4,11 +4,19 @@ export const nft = createSlice({
   name: 'nft ',
   initialState: {
     contract: null,
-    cost: 0,
     maxSupply: 0,
+    totalSupply: 0,
+    cost: 0,
+    userBalance: 0,
     allowMintingOn: 0,
     baseURI: '',
     offers:[],
+    mintedTokens:[],
+    minting: {
+      isMinting: false,
+      isSuccess: false,
+      transactionHash: null
+    },
     creating: {
       isCreating: false,
       isSuccess: false,
@@ -29,11 +37,17 @@ export const nft = createSlice({
     setNFT: (state, action) => {
       state.contract = action.payload
     },
+    setMaxSupply: (state, action) => {
+      state.maxSupply = action.payload
+    },
+    setTotalSupply: (state, action) => {
+      state.totalSupply = action.payload
+    },
     setCost: (state, action) => {
       state.cost = action.payload
     },
-    setMaxSupply: (state, action) => {
-      state.maxSupply = action.payload
+    setUserBalance: (state, action) => {
+      state.userBalance = action.payload
     },
     setAllowMintingOn: (state, action) => {
       state.allowMintingOn = action.payload
@@ -43,6 +57,24 @@ export const nft = createSlice({
     },
     offersLoaded: (state, action) => {
       state.offers = action.payload
+    },
+    mintedTokensLoaded: (state, action) => {
+      state.mintedTokens = action.payload
+    },
+    mintRequest: (state, action) => {
+      state.minting.isMinting = true
+      state.minting.isSuccess = false
+      state.minting.transactionHash = null
+    },
+    mintSuccess: (state, action) => {
+      state.minting.isMinting = false
+      state.minting.isSuccess = true
+      state.minting.transactionHash = action.payload
+    },
+    mintFail: (state, action) => {
+      state.minting.isMinting = false
+      state.minting.isSuccess = false
+      state.minting.transactionHash = null
     },
     createRequest: (state, action) => {
       state.creating.isCreating = true
@@ -96,11 +128,17 @@ export const nft = createSlice({
 
 export const { 
   setNFT, 
-  setCost, 
   setMaxSupply, 
+  setTotalSupply, 
+  setCost, 
+  setUserBalance, 
   setAllowMintingOn, 
   setBaseURI,
+  mintedTokensLoaded,
   offersLoaded,
+  mintRequest,
+  mintSuccess,
+  mintFail,
   createRequest,
   createSuccess,
   createFail,
