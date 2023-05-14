@@ -12,6 +12,7 @@ import {
   setTotalSupply, 
   setCost, 
   setUserBalance, 
+  loadTokenCurrentStatus,
   offersLoaded,
   mintedTokensLoaded,
   mintRequest,
@@ -183,7 +184,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
   };
 
 //Lending Status tab
-// ------------------------------------------------------------------------------
+ //------------------------------------------------------------------------------
   // LOAD ALL Tokens
 
   export const loadAllMintedTokens = async (provider, nft, dispatch) => {
@@ -197,6 +198,30 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
     dispatch(mintedTokensLoaded(mintedTokens))
   }
 
+  //------------------------------------------------------------------------------
+  // LOAD Token Status
+
+  export const tokenCurrentStatus = async (provider, nft, tokenId, dispatch) => {
+    const tokenStatus = await nft.tokenStates(tokenId);
+    dispatch(loadTokenCurrentStatus(tokenStatus));
+    return tokenStatus;
+  }
+
 //xxxxxxxx
 // ------------------------------------------------------------------------------
   // XXXXXXXXX
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
