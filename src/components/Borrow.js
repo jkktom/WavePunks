@@ -13,7 +13,7 @@ import Loading from './Loading';
 import {
   loadAllOffers,
   cancelLendingOffer,
-  borrowNFT
+  borrowToken
 } from '../store/interactions'
 
 const Borrow = () => {
@@ -37,7 +37,7 @@ const Borrow = () => {
 
   const borrowHandler = async (tokenId) => {
     try {
-      await borrowNFT(provider, nft, tokenId, dispatch);
+      await borrowToken(provider, nft, tokenId, dispatch);
       alert('Successfully Borrowed NFT ');
     } catch (error) {
       console.error('Error Borrwing:', error);

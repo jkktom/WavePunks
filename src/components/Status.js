@@ -12,6 +12,8 @@ import Loading from './Loading';
 import {
   loadAllOffers,
   tokenCurrentStatus,
+  redeemToken,
+  claimToken,
   loadAllMintedTokens
 } from '../store/interactions'
 
@@ -25,11 +27,23 @@ const Status = () => {
   const dispatch = useDispatch();	
 
   const redeemNFT = async (tokenId) => {
-   console.log(tokenId);
+    try {
+      await redeemToken(provider, nft, tokenId, dispatch)
+      alert('Redeem Done. Token Initialized');
+    } catch (error) {
+      console.error('Error Redeeming:', error);
+      alert('Error Redeeming');
+    }
   };
 
   const claimNFT = async (tokenId) => {
-   console.log(tokenId);    
+    try {
+      await claimNFT(provider, nft, tokenId, dispatch)
+      alert('Claiming Done. Token Initialized');
+    } catch (error) {
+      console.error('Error Claiming:', error);
+      alert('Error Claiming');
+    }
   };
 
   const checkStatus = async (tokenId) => {

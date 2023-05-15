@@ -26,7 +26,13 @@ import {
   cancelFail,
   borrowRequest,
   borrowSuccess,
-  borrowFail
+  borrowFail,
+  redeemRequest,
+  redeemSuccess,
+  redeemFail,
+  claimRequest,
+  claimSuccess,
+  claimFail
 } from './reducers/nft'
 
 import NFT_ABI from '../abis/WaveNFT.json';
@@ -162,7 +168,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
       const transaction = await nft.connect(signer).cancelLendingOffer(tokenId);
       await transaction.wait()
       dispatch(cancelSuccess(transaction.hash))
-    } catch (error  ) {
+    } catch (error) {
       dispatch(cancelFail())
     }
   };
@@ -171,7 +177,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
   // ------------------------------------------------------------------------------
   // Borrow Lending OFFERS
 
-  export const borrowNFT = async (provider, nft, tokenId, dispatch) => {
+  export const borrowToken = async (provider, nft, tokenId, dispatch) => {
     try {
       dispatch(borrowRequest())
       const signer = await provider.getSigner()
@@ -215,6 +221,34 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
     return tokenStatusString;
   }
 
+  // ------------------------------------------------------------------------------
+  // Redeem tokens of Expired OFFERS
+
+  export const redeemToken = async (provider, nft, tokenId, dispatch) => {
+    try {
+      dispatch(redeemRequest())
+      const signer = await provider.getSigner()
+      const transaction = await nft.connect(signer).redeemNFT(tokenId);
+      await transaction.wait()
+      dispatch(redeemSuccess(transaction.hash))
+    } catch (error) {
+      dispatch(redeemFail())
+    }
+  };
+  // ------------------------------------------------------------------------------
+  // Claim tokens of Seized Tokens
+
+  export const claimToken = async (provider, nft, tokenId, dispatch) => {
+    try {
+      dispatch(claimRequest())
+      const signer = await provider.getSigner()
+      const transaction = await nft.connect(signer).claimNFT(tokenId);
+      await transaction.wait()
+      dispatch(claimSuccess(transaction.hash))
+    } catch (error) {
+      dispatch(claimFail())
+    }
+  };
 //xxxxxxxx
 // ------------------------------------------------------------------------------
   // XXXXXXXXX
