@@ -12,7 +12,7 @@ export const nft = createSlice({
     baseURI: '',
     offers:[],
     mintedTokens:[],
-    tokenCurrentStatus: 0,
+    tokenCurrentStatus: 'initialState',
     minting: {
       isMinting: false,
       isSuccess: false,

@@ -16,12 +16,11 @@ import {
 } from '../store/interactions'
 
 const Status = () => {
-  const [tokenId, setTokenId] = useState('');
+  const [status, setStatus] = useState('');
 	const provider = useSelector(state => state.provider.connection)
 	const account = useSelector(state => state.provider.account);
 
 	const nft = useSelector(state => state.nft.contract);
-	// const offers = useSelector(state => state.nft.offers);
 	const mintedTokens = useSelector(state => state.nft.mintedTokens);
   const dispatch = useDispatch();	
 
@@ -34,8 +33,8 @@ const Status = () => {
   };
 
   const checkStatus = async (tokenId) => {
-   const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch)    
-   console.log(result);
+    const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+    setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
   };
 
   const loadTokens = async () => {
@@ -72,7 +71,12 @@ const Status = () => {
 								<td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>{token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}</td>
                 <td style={css}>
-                  <Button onClick={() => checkStatus(token.args.tokenId.toString())}>Check</Button>
+                  {status[token.args.tokenId.toString()] ? 
+                    status[token.args.tokenId.toString()] :
+                    <Button onClick={() => checkStatus(token.args.tokenId.toString())}>
+                      Check
+                    </Button>
+                  }
                 </td>
                 <td style={css}>
                   <Button onClick={() => redeemNFT(token.args.tokenId.toString())}>Redeem</Button>

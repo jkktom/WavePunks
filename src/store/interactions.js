@@ -200,11 +200,19 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
 
   //------------------------------------------------------------------------------
   // LOAD Token Status
-
   export const tokenCurrentStatus = async (provider, nft, tokenId, dispatch) => {
+    const tokenStateMapping = {
+        0: 'Initialized',
+        1: 'Lending is Open',
+        2: 'In Lending Period',
+        3: 'Lending Expired',
+        4: 'Token Seized'
+      };
+    
     const tokenStatus = await nft.tokenStates(tokenId);
-    dispatch(loadTokenCurrentStatus(tokenStatus));
-    return tokenStatus;
+    const tokenStatusString = tokenStateMapping[tokenStatus];
+    dispatch(loadTokenCurrentStatus(tokenStatusString));
+    return tokenStatusString;
   }
 
 //xxxxxxxx
