@@ -177,17 +177,24 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
   // ------------------------------------------------------------------------------
   // Borrow Lending OFFERS
 
-  export const borrowToken = async (provider, nft, tokenId, dispatch) => {
+  export const borrowToken = async (provider, nft, tokenId, borrowDeposit, dispatch) => {
     try {
       dispatch(borrowRequest())
       const signer = await provider.getSigner()
-      const transaction = await nft.connect(signer).borrowNFT(tokenId);
+
+      // Convert the deposit value to correct units (Ether to Wei)
+      const depositInWei = ethers.utils.parseEther(borrowDeposit.toString());
+
+      const transaction = await nft.connect(signer).borrowNFT(tokenId, { value: depositInWei });
       await transaction.wait()
       dispatch(borrowSuccess(transaction.hash))
     } catch (error) {
+      console.error(error); // Log the error for debugging
       dispatch(borrowFail())
     }
   };
+
+
 
 //Lending Status tab
  //------------------------------------------------------------------------------
