@@ -12,6 +12,7 @@ import Loading from './Loading';
 import {
   loadAllOffers,
   tokenCurrentStatus,
+  fetchOwnerOfToken,
   redeemToken,
   claimToken,
   loadAllMintedTokens
@@ -19,6 +20,7 @@ import {
 
 const Status = () => {
   const [status, setStatus] = useState('');
+  const [owner, setOwner] = useState('');
 	const provider = useSelector(state => state.provider.connection)
 	const account = useSelector(state => state.provider.account);
 
@@ -50,6 +52,10 @@ const Status = () => {
     const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
     setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
   };
+  const checkCurrentOwner = async (tokenId) => {
+    const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
+    setOwner(prevOwner => ({ ...prevOwner, [tokenId]: currentOwner }));
+  };
 
   const loadTokens = async () => {
     await loadAllMintedTokens(provider, nft, dispatch);
@@ -75,6 +81,7 @@ const Status = () => {
 						  <th style={css}>Token <br /> ID</th>
               <th style={css}>Token <br /> Minter</th>
               <th style={css}>Token <br /> Status</th>
+              <th style={css}>Owner or <br /> Borrower </th>
               <th style={css}>Redeem <br /> Token</th>
               <th style={css}>Claim <br /> Token</th>
 						</tr>
@@ -89,6 +96,14 @@ const Status = () => {
                     status[token.args.tokenId.toString()] :
                     <Button onClick={() => checkStatus(token.args.tokenId.toString())}>
                       Check
+                    </Button>
+                  }
+                </td>
+                <td style={css}>
+                  {owner[token.args.tokenId.toString()] ? 
+                    owner[token.args.tokenId.toString()].slice(0, 3) + '...' + owner[token.args.tokenId.toString()].slice(38, 42) :
+                    <Button onClick={() => checkCurrentOwner(token.args.tokenId.toString())}>
+                      Owner
                     </Button>
                   }
                 </td>

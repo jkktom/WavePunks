@@ -13,6 +13,7 @@ import {
   setCost, 
   setUserBalance, 
   loadTokenCurrentStatus,
+  loadOwnerOfToken,
   offersLoaded,
   mintedTokensLoaded,
   mintRequest,
@@ -124,7 +125,6 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
     } catch (error) {
       dispatch(createFail())
     }
-    
   };
 
 //Mint Tab
@@ -182,10 +182,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
       dispatch(borrowRequest())
       const signer = await provider.getSigner()
 
-      // Convert the deposit value to correct units (Ether to Wei)
-      const depositInWei = ethers.utils.parseEther(borrowDeposit.toString());
-
-      const transaction = await nft.connect(signer).borrowNFT(tokenId, { value: depositInWei });
+      const transaction = await nft.connect(signer).borrowNFT(tokenId, { value: borrowDeposit });
       await transaction.wait()
       dispatch(borrowSuccess(transaction.hash))
     } catch (error) {
@@ -227,7 +224,15 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
     dispatch(loadTokenCurrentStatus(tokenStatusString));
     return tokenStatusString;
   }
+  // ------------------------------------------------------------------------------
+  // LOAD Owner OF Token
 
+  export const fetchOwnerOfToken = async (provider, nft, tokenId, dispatch) => {
+    const currentOwner = await nft.ownerOf(tokenId);
+    dispatch(loadOwnerOfToken(currentOwner));
+
+    return currentOwner;
+  }
   // ------------------------------------------------------------------------------
   // Redeem tokens of Expired OFFERS
 

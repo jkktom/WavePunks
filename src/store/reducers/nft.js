@@ -13,6 +13,7 @@ export const nft = createSlice({
     offers:[],
     mintedTokens:[],
     tokenCurrentStatus: 'initialState',
+    ownerOfToken: '',
     minting: {
       isMinting: false,
       isSuccess: false,
@@ -68,6 +69,9 @@ export const nft = createSlice({
     },
     loadTokenCurrentStatus: (state, action) => {
       state.tokenCurrentStatus = action.payload;
+    },
+    loadOwnerOfToken: (state, action) => {
+      state.ownerOfToken = action.payload;
     },
     offersLoaded: (state, action) => {
       state.offers = action.payload
@@ -177,8 +181,9 @@ export const {
   setAllowMintingOn, 
   setBaseURI,
   loadTokenCurrentStatus,
-  mintedTokensLoaded,
+  loadOwnerOfToken,
   offersLoaded,
+  mintedTokensLoaded,
   mintRequest,
   mintSuccess,
   mintFail,

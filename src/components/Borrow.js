@@ -38,8 +38,7 @@ const Borrow = () => {
   const borrowHandler = async (tokenId) => {
     try {
     	const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
-    	const borrowDeposit = ethers.utils.formatEther(offer.args.deposit.toString());
-      await borrowToken(provider, nft, tokenId, borrowDeposit, dispatch);
+      await borrowToken(provider, nft, tokenId, offer.args.deposit, dispatch);
       alert('Successfully Borrowed NFT ');
     } catch (error) {
       console.error('Error Borrwing:', error);
