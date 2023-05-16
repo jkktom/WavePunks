@@ -4,13 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol"; 
-// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
-    // using SafeMath for uint256;
     using Strings for uint256;
-    // uint256 public redemptionPeriod;
     uint256 public cost;
     uint256 public maxSupply;
     uint256 public allowMintingOn;
@@ -18,7 +15,35 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     string public constant baseExtension = ".json";
 
     event Mint(uint256 tokenId, address minter);
+
     event Withdraw(uint256 amount, address owner);
+
+    event LendingOfferCreated(
+        address indexed owner,
+        uint256 indexed timestamp,
+        uint256 indexed tokenId,
+        uint256 deposit,
+        uint256 lendingStartTime,
+        uint256 lendingExpiration,
+        uint256 redemptionPeriod
+    );
+
+    event LendingOfferCanceled(
+        uint256 indexed tokenId
+    );
+    event Rented(
+        uint256 indexed tokenId
+    );
+    event Seized(
+        uint256 indexed tokenId
+    );
+    event Redeemed(
+        uint256 indexed tokenId
+    );
+
+
+    mapping(uint256 => LendingOffer) public lendingOffers;
+    mapping(uint256 => TokenState) public tokenStates;
 
     constructor(
         string memory _name,
@@ -63,32 +88,9 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         _;
     }
 
-    event LendingOfferCreated(
-        address indexed owner,
-        uint256 indexed timestamp,
-        uint256 indexed tokenId,
-        uint256 deposit,
-        uint256 lendingStartTime,
-        uint256 lendingExpiration,
-        uint256 redemptionPeriod
-    );
-
-    event LendingOfferCanceled(
-        uint256 indexed tokenId
-    );
-    event Rented(
-        uint256 indexed tokenId
-    );
-    event Seized(
-        uint256 indexed tokenId
-    );
-    event Redeemed(
-        uint256 indexed tokenId
-    );
-
-
-    mapping(uint256 => LendingOffer) public lendingOffers;
-    mapping(uint256 => TokenState) public tokenStates;
+    function setBaseURI(string memory _baseURI) public onlyOwner {
+        baseURI = _baseURI;
+    }
 
     function mint() public payable nonReentrant {
         require(block.timestamp >= allowMintingOn, "Minting has not started yet");
@@ -200,19 +202,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     }
 
 
-    function _seizeNFT(uint256 tokenId) internal {
-        LendingOffer storage offer = lendingOffers[tokenId];
-        require(offer.borrower != address(0), "No borrower for this token");
-
-        // Transfer NFT ownership permanently to the borrower
-        _safeTransfer(offer.owner, offer.borrower, tokenId, "");
-
-        // Clear the lending offer
-        delete lendingOffers[tokenId];
-        tokenStates[tokenId] = TokenState.initialState;
-        emit Seized(tokenId);
-    }    
-
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
         require(_exists(tokenId), "ERC721: operator query for nonexistent token");
 
@@ -234,8 +223,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             revert("Unexpected token state");
         }
     }
-
-
 
     function redeemNFT(uint256 tokenId) external payable nonReentrant updateTokenState(tokenId) {
         TokenState tokenState = _getTokenState(tokenId);
@@ -269,11 +256,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         } else {
             return TokenState.seized;
         }
-
-    }
-
-    function setBaseURI(string memory _baseURI) public onlyOwner {
-        baseURI = _baseURI;
     }
 
     function claimNFT(uint256 tokenId) external {
@@ -285,4 +267,18 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
 
         _seizeNFT(tokenId);
     }
+
+    function _seizeNFT(uint256 tokenId) internal {
+        LendingOffer storage offer = lendingOffers[tokenId];
+        require(offer.borrower != address(0), "No borrower for this token");
+
+        // Transfer NFT ownership permanently to the borrower
+        _safeTransfer(offer.owner, offer.borrower, tokenId, "");
+
+        // Clear the lending offer
+        delete lendingOffers[tokenId];
+        tokenStates[tokenId] = TokenState.initialState;
+        emit Seized(tokenId);
+    }    
+
 }
