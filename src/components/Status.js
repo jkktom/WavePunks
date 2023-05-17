@@ -27,6 +27,7 @@ const Status = () => {
 
 	const nft = useSelector(state => state.nft.contract);
 	const mintedTokens = useSelector(state => state.nft.mintedTokens);
+  const offers = useSelector(state => state.nft.offers);
   const dispatch = useDispatch();	
 
   const redeemNFT = async (tokenId) => {
@@ -50,9 +51,34 @@ const Status = () => {
   };
 
   const checkStatus = async (tokenId) => {
-    const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
-    setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
+    // Fetch the lending offer for this token
+    const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+    
+    // Check if the lending offer exists and if the current status is "In Lending Period"
+    if (offer) {
+      const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+      if (result === 'In Lending Period') {
+        const currentTime = Math.floor(Date.now() / 1000); // Get the current time in seconds
+        const lendingExpiration = offer.args.lendingExpiration.toNumber();
+        const redemptionPeriodEnd = lendingExpiration + offer.args.redemptionPeriod.toNumber();
+
+        if (currentTime < lendingExpiration) {
+          setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
+        } else if (currentTime < redemptionPeriodEnd) {
+          setStatus(prevStatus => ({ ...prevStatus, [tokenId]: 'Redemption Period' }));
+        } else {
+          setStatus(prevStatus => ({ ...prevStatus, [tokenId]: 'Token Seized' }));
+        }
+      } else {
+        setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
+      }
+    } else {
+      const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+      setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
+    }
   };
+
+
   const checkCurrentOwner = async (tokenId) => {
     const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
     setOwner(prevOwner => ({ ...prevOwner, [tokenId]: currentOwner }));
