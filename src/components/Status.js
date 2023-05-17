@@ -61,6 +61,8 @@ const Status = () => {
     await loadAllMintedTokens(provider, nft, dispatch);
   }
 
+  const imageUrl = '';
+
   useEffect(() => {
     if (provider && nft) {
       loadTokens();
@@ -90,7 +92,14 @@ const Status = () => {
 						{mintedTokens && mintedTokens.map((token, index) => (    
 							<tr key={index}>
 								<td style={css}>{token.args.tokenId.toString()}</td>
-                <td style={css}>{token.args.tokenId.toString()}</td>
+                <td style={css}>
+                  <img
+                    src={`https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${token.args.tokenId.toString()}.png`}
+                    alt="Wave NFTs"
+                    width="65px"
+                    height="65px"
+                  />
+                </td>
                 <td style={css}>{token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}</td>
                 <td style={css}>
                   {status[token.args.tokenId.toString()] ? 
