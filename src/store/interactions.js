@@ -236,11 +236,11 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
   // ------------------------------------------------------------------------------
   // Redeem tokens of Expired OFFERS
 
-  export const redeemToken = async (provider, nft, tokenId, dispatch) => {
+  export const redeemToken = async (provider, nft, tokenId, borrowDeposit, dispatch) => {
     try {
       dispatch(redeemRequest())
       const signer = await provider.getSigner()
-      const transaction = await nft.connect(signer).redeemNFT(tokenId);
+      const transaction = await nft.connect(signer).redeemNFT(tokenId, { value: borrowDeposit });
       await transaction.wait()
       dispatch(redeemSuccess(transaction.hash))
     } catch (error) {

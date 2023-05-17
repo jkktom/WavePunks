@@ -40,7 +40,7 @@ const Status = () => {
 
   const claimNFT = async (tokenId) => {
     try {
-      await claimNFT(provider, nft, tokenId, dispatch)
+      await claimToken(provider, nft, tokenId, dispatch)
       alert('Claiming Done. Token Initialized');
     } catch (error) {
       console.error('Error Claiming:', error);
@@ -79,10 +79,10 @@ const Status = () => {
           <thead>
             <tr>
 						  <th style={css}>Token <br /> ID</th>
+              <th style={css}>NFT pic</th>
               <th style={css}>Token <br /> Minter</th>
               <th style={css}>Token <br /> Status</th>
               <th style={css}>Owner or <br /> Borrower </th>
-              <th style={css}>Redeem <br /> Token</th>
               <th style={css}>Claim <br /> Token</th>
 						</tr>
           </thead>
@@ -90,6 +90,7 @@ const Status = () => {
 						{mintedTokens && mintedTokens.map((token, index) => (    
 							<tr key={index}>
 								<td style={css}>{token.args.tokenId.toString()}</td>
+                <td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>{token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}</td>
                 <td style={css}>
                   {status[token.args.tokenId.toString()] ? 
@@ -106,9 +107,6 @@ const Status = () => {
                       Owner
                     </Button>
                   }
-                </td>
-                <td style={css}>
-                  <Button onClick={() => redeemNFT(token.args.tokenId.toString())}>Redeem</Button>
                 </td>
                 <td style={css}>
                   <Button onClick={() => claimNFT(token.args.tokenId.toString())}>Claim</Button>

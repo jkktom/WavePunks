@@ -13,7 +13,8 @@ import Loading from './Loading';
 import {
   loadAllOffers,
   cancelLendingOffer,
-  borrowToken
+  borrowToken,
+  redeemToken
 } from '../store/interactions'
 
 const Borrow = () => {
@@ -46,6 +47,17 @@ const Borrow = () => {
     }
   };
 
+  const redeemHandler = async (tokenId) => {
+    try {
+    	const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+      await redeemToken(provider, nft, tokenId, offer.args.deposit, dispatch);
+      alert('Successfully Redeemed NFT ');
+    } catch (error) {
+      console.error('Error Redeemed:', error);
+      alert('Error Redeemed');
+    }
+  };
+
   useEffect(() => {
     if (provider && nft) {
       loadAllOffers(provider, nft, dispatch);
@@ -71,6 +83,7 @@ const Borrow = () => {
 						  <th style={css}>Redemption <br /> Duration</th>
 						  <th style={css}>Borrow <br /> Offer</th>
 						  <th style={css}>Cancel <br /> Offer</th>
+						  <th style={css}>Redeem <br /> NFT</th>
 						</tr>
           </thead>
           <tbody>
@@ -113,6 +126,9 @@ const Borrow = () => {
 								</td>
 						    <td style={css}>
 						    	<Button onClick={() => cancelOffer(offer.args.tokenId.toString())}>Cancel</Button>
+								</td>
+						    <td style={css}>
+						    	<Button onClick={() => redeemHandler(offer.args.tokenId.toString())}>Redeem</Button>
 								</td>
               </tr>
             ))}
