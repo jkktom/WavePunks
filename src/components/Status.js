@@ -60,6 +60,10 @@ const Status = () => {
 
   const loadTokens = async () => {
     await loadAllMintedTokens(provider, nft, dispatch);
+    mintedTokens && mintedTokens.map((token, index) => {
+      checkStatus(token.args.tokenId.toString());
+      checkCurrentOwner(token.args.tokenId.toString());
+    })
   }
 
   const imageUrl = '';
@@ -74,6 +78,9 @@ const Status = () => {
 	  textAlign: 'center',
 	  verticalAlign: 'middle',
 	};
+  const badgeCss = {
+    fontSize: '15px', // adjust the value as needed
+  };
 
   const getStatusVariant = (status) => {
     switch (status) {
@@ -119,7 +126,6 @@ const Status = () => {
                     height="65px"
                   />
                 </td>
-                {/*<td style={css}>{token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}</td>*/}
                 <td style={css}>
                   {token.args.minter ? (
                     <span title={token.args.minter}>
@@ -133,12 +139,12 @@ const Status = () => {
                 </td>
                 <td style={css}>
                   {status[token.args.tokenId.toString()] ? (
-                    <span className={`badge ${getStatusVariant(status[token.args.tokenId.toString()])}`}>
+                    <span style={badgeCss} className={`badge ${getStatusVariant(status[token.args.tokenId.toString()])}`}>
                       {status[token.args.tokenId.toString()]}
                     </span>
                   ) : (
-                    <Button onClick={() => checkStatus(token.args.tokenId.toString())}>
-                      Check
+                    <Button variant="light">
+                      load
                     </Button>
                   )}
                 </td>
@@ -149,8 +155,8 @@ const Status = () => {
                       {owner[token.args.tokenId.toString()].slice(0, 3) + '...' + owner[token.args.tokenId.toString()].slice(38, 42)}
                     </span>
                   ) : (
-                    <Button onClick={() => checkCurrentOwner(token.args.tokenId.toString())}>
-                      Owner
+                    <Button variant="light">
+                      load
                     </Button>
                   )}
                 </td>
