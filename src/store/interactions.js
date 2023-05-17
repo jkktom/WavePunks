@@ -224,6 +224,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
     dispatch(loadTokenCurrentStatus(tokenStatusString));
     return tokenStatusString;
   }
+
   // ------------------------------------------------------------------------------
   // LOAD Owner OF Token
 
