@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
+import Badge from 'react-bootstrap/Badge';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
@@ -74,6 +75,24 @@ const Status = () => {
 	  verticalAlign: 'middle',
 	};
 
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'Initialized':
+        return 'bg-info text-dark';
+      case 'Lending is Open':
+        return 'bg-primary';
+      case 'In Lending Period':
+        return 'bg-success';
+      case 'Lending Expired':
+        return 'bg-warning text-dark';
+      case 'Token Seized':
+        return 'bg-danger';
+      default:
+        return 'bg-light text-dark';
+    }
+  };
+
+
 	return (
     <div>
       {provider && nft ? (
@@ -100,23 +119,42 @@ const Status = () => {
                     height="65px"
                   />
                 </td>
-                <td style={css}>{token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}</td>
+                {/*<td style={css}>{token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}</td>*/}
                 <td style={css}>
-                  {status[token.args.tokenId.toString()] ? 
-                    status[token.args.tokenId.toString()] :
-                    <Button onClick={() => checkStatus(token.args.tokenId.toString())}>
-                      Check
-                    </Button>
-                  }
-                </td>
-                <td style={css}>
-                  {owner[token.args.tokenId.toString()] ? 
-                    owner[token.args.tokenId.toString()].slice(0, 3) + '...' + owner[token.args.tokenId.toString()].slice(38, 42) :
+                  {token.args.minter ? (
+                    <span title={token.args.minter}>
+                      {token.args.minter.slice(0, 3) + '...' + token.args.minter.slice(38, 42)}
+                    </span>
+                  ) : (
                     <Button onClick={() => checkCurrentOwner(token.args.tokenId.toString())}>
                       Owner
                     </Button>
-                  }
+                  )}
                 </td>
+                <td style={css}>
+                  {status[token.args.tokenId.toString()] ? (
+                    <span className={`badge ${getStatusVariant(status[token.args.tokenId.toString()])}`}>
+                      {status[token.args.tokenId.toString()]}
+                    </span>
+                  ) : (
+                    <Button onClick={() => checkStatus(token.args.tokenId.toString())}>
+                      Check
+                    </Button>
+                  )}
+                </td>
+
+                <td style={css}>
+                  {owner[token.args.tokenId.toString()] ? (
+                    <span title={owner[token.args.tokenId.toString()]}>
+                      {owner[token.args.tokenId.toString()].slice(0, 3) + '...' + owner[token.args.tokenId.toString()].slice(38, 42)}
+                    </span>
+                  ) : (
+                    <Button onClick={() => checkCurrentOwner(token.args.tokenId.toString())}>
+                      Owner
+                    </Button>
+                  )}
+                </td>
+
                 <td style={css}>
                   <Button onClick={() => claimNFT(token.args.tokenId.toString())}>Claim</Button>
                 </td>

@@ -61,7 +61,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     }
 
     enum TokenState {
-        initialState,
+        initialState, // color
         lendingOpen,
         lendingPeriod,
         expired,
