@@ -83,7 +83,6 @@ const Borrow = () => {
 						  <th style={css}>Redemption <br /> Duration</th>
 						  <th style={css}>Borrow <br /> Offer</th>
 						  <th style={css}>Cancel <br /> Offer</th>
-						  <th style={css}>Redeem <br /> NFT</th>
 						</tr>
           </thead>
           <tbody>
@@ -126,9 +125,6 @@ const Borrow = () => {
 								</td>
 						    <td style={css}>
 						    	<Button onClick={() => cancelOffer(offer.args.tokenId.toString())}>Cancel</Button>
-								</td>
-						    <td style={css}>
-						    	<Button onClick={() => redeemHandler(offer.args.tokenId.toString())}>Redeem</Button>
 								</td>
               </tr>
             ))}

@@ -14,4 +14,5 @@ const MaskedInput = ({ mask, value, onChange, placeholder, className }) => {
 
   return <input ref={inputRef} value={value} onChange={onChange} className={className} />;
 };
+
 export default MaskedInput;

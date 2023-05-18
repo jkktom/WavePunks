@@ -55,6 +55,7 @@ const Status = () => {
     setStatus(prevStatus => ({ ...prevStatus, [tokenId]: status }));
   }
 
+  //Optimistic Feature Using Javascript
   const checkStatus = async (tokenId) => {
     //Fetch from the smartContract - result
     const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
@@ -90,6 +91,16 @@ const Status = () => {
       }
     };
   }
+  const redeemHandler = async (tokenId) => {
+    try {
+      const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+      await redeemToken(provider, nft, tokenId, offer.args.deposit, dispatch);
+      alert('Successfully Redeemed NFT ');
+    } catch (error) {
+      console.error('Error Redeemed:', error);
+      alert('Error Redeemed');
+    }
+  };
 
   const checkCurrentOwner = async (tokenId) => {
     const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
@@ -113,8 +124,8 @@ const Status = () => {
 
   useEffect(() => {
     if (provider && nft) {
-      loadAllOffers(provider, nft, dispatch);
       loadTokens();
+      loadAllOffers(provider, nft, dispatch);
     }
   }, [provider, nft, dispatch]);
 
@@ -156,6 +167,7 @@ const Status = () => {
               <th style={css}>Token <br /> Status</th>
               <th style={css}>Owner or <br /> Borrower </th>
               <th style={css}>Claim <br /> Token</th>
+              <th style={css}>Redeem <br /> Token</th>
 						</tr>
           </thead>
           <tbody>
@@ -203,6 +215,9 @@ const Status = () => {
 
                 <td style={css}>
                   <Button onClick={() => claimNFT(token.args.tokenId.toString())}>Claim</Button>
+                </td>
+                <td style={css}>
+                  <Button onClick={() => redeemHandler(token.args.tokenId.toString())}>Redeem</Button>
                 </td>
 							</tr>
             ))}
