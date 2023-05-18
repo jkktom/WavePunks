@@ -22,6 +22,7 @@ import {
 const Status = () => {
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
+  const [isLoading, setIsLoading] = useState(false); 
 	const provider = useSelector(state => state.provider.connection)
 	const account = useSelector(state => state.provider.account);
 
@@ -50,34 +51,45 @@ const Status = () => {
     }
   };
 
+  const setTokenStatus = (tokenId, status) => {
+    setStatus(prevStatus => ({ ...prevStatus, [tokenId]: status }));
+  }
+
   const checkStatus = async (tokenId) => {
-    // Fetch the lending offer for this token
-    const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
-    
-    // Check if the lending offer exists and if the current status is "In Lending Period"
-    if (offer) {
-      const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
-      if (result === 'In Lending Period') {
+    //Fetch from the smartContract - result
+    const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+    /* 0: 'Initialized',
+       1: 'Lending is Open',
+       2: 'In Lending Period',
+       3: 'Lending Expired',
+       4: 'Token Seized' */
+    if (result === 'Initialized'
+      || result === 'Lending is Open'
+      || result === 'Lending Expired'
+      || result === 'Token Seized'
+    ) {
+      setTokenStatus(tokenId, result);
+    } else if (result === 'In Lending Period') {
+      setTokenStatus(tokenId, result);
+      const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+      if (offer) {
         const currentTime = Math.floor(Date.now() / 1000); // Get the current time in seconds
         const lendingExpiration = offer.args.lendingExpiration.toNumber();
-        const redemptionPeriodEnd = lendingExpiration + offer.args.redemptionPeriod.toNumber();
-
-        if (currentTime < lendingExpiration) {
-          setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
-        } else if (currentTime < redemptionPeriodEnd) {
-          setStatus(prevStatus => ({ ...prevStatus, [tokenId]: 'Redemption Period' }));
-        } else {
-          setStatus(prevStatus => ({ ...prevStatus, [tokenId]: 'Token Seized' }));
-        }
+        const redemptionDeadline = lendingExpiration + offer.args.redemptionPeriod.toNumber();
+        if (currentTime > lendingExpiration) {
+          if (currentTime > redemptionDeadline ) {
+            setTokenStatus(tokenId, 'Token Seized');
+          } else {
+            setTokenStatus(tokenId, 'Lending Expired');
+          }
+        } else{
+          setTokenStatus(tokenId, result);
+        } 
       } else {
-        setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
+        setTokenStatus(tokenId, 'Initialized');
       }
-    } else {
-      const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
-      setStatus(prevStatus => ({ ...prevStatus, [tokenId]: result }));
-    }
-  };
-
+    };
+  }
 
   const checkCurrentOwner = async (tokenId) => {
     const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
@@ -85,17 +97,23 @@ const Status = () => {
   };
 
   const loadTokens = async () => {
+    setIsLoading(true);
     await loadAllMintedTokens(provider, nft, dispatch);
-    mintedTokens && mintedTokens.map((token, index) => {
-      checkStatus(token.args.tokenId.toString());
-      checkCurrentOwner(token.args.tokenId.toString());
-    })
+    const statusPromises = mintedTokens && mintedTokens.map((token, index) => {
+      return Promise.all([
+        checkStatus(token.args.tokenId.toString()),
+        checkCurrentOwner(token.args.tokenId.toString())
+      ]);
+    });
+    await Promise.all(statusPromises);
+    setIsLoading(false);
   }
 
   const imageUrl = '';
 
   useEffect(() => {
     if (provider && nft) {
+      loadAllOffers(provider, nft, dispatch);
       loadTokens();
     }
   }, [provider, nft, dispatch]);
@@ -105,7 +123,7 @@ const Status = () => {
 	  verticalAlign: 'middle',
 	};
   const badgeCss = {
-    fontSize: '15px', // adjust the value as needed
+    fontSize: '16px', // adjust the value as needed
   };
 
   const getStatusVariant = (status) => {
@@ -148,8 +166,8 @@ const Status = () => {
                   <img
                     src={`https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${token.args.tokenId.toString()}.png`}
                     alt="Wave NFTs"
-                    width="65px"
-                    height="65px"
+                    width="69px"
+                    height="69px"
                   />
                 </td>
                 <td style={css}>
@@ -169,9 +187,7 @@ const Status = () => {
                       {status[token.args.tokenId.toString()]}
                     </span>
                   ) : (
-                    <Button variant="light">
-                      load
-                    </Button>
+                    null
                   )}
                 </td>
 
@@ -181,9 +197,7 @@ const Status = () => {
                       {owner[token.args.tokenId.toString()].slice(0, 3) + '...' + owner[token.args.tokenId.toString()].slice(38, 42)}
                     </span>
                   ) : (
-                    <Button variant="light">
-                      load
-                    </Button>
+                    null
                   )}
                 </td>
 
