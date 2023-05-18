@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.2.0",
     "lodash": "^4.17.21",
+    "luxon": "^2.2.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-blockies": "^1.4.1",
@@ -22,7 +23,8 @@
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.1",
     "reselect": "^4.1.6",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "inputmask": "^5.x"
   },
   "scripts": {
     "start": "react-scripts start",
