@@ -25,14 +25,15 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         uint256 deposit,
         uint256 lendingStartTime,
         uint256 lendingExpiration,
-        uint256 redemptionPeriod
+        uint256 redemptionPeriod,
+        TokenState state
     );
 
-    event LendingOfferCanceled(uint256 indexed tokenId);
-    event Rented(uint256 indexed tokenId);
-    event Seized(uint256 indexed tokenId);
-    event Expired(uint256 indexed tokenId);
-    event Redeemed(uint256 indexed tokenId);
+    event LendingOfferCanceled(uint256 indexed tokenId, TokenState state);
+    event Rented(uint256 indexed tokenId, TokenState state);
+    event Seized(uint256 indexed tokenId, TokenState state);
+    event Expired(uint256 indexed tokenId, TokenState state);
+    event Redeemed(uint256 indexed tokenId, TokenState state);
 
     mapping(uint256 => LendingOffer) public lendingOffers;
     mapping(uint256 => TokenState) public tokenStates;
@@ -58,7 +59,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         uint256 redemptionPeriod;
         address owner;
         address borrower;
-        bool isOpen;
     }
 
     enum TokenState {
@@ -140,8 +140,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             lendingExpiration: _lendingExpiration,
             redemptionPeriod: _redemptionPeriod,
             owner: msg.sender,
-            borrower: address(0),
-            isOpen: true
+            borrower: address(0)
         });
 
         lendingOffers[_tokenId] = newOffer;
@@ -154,7 +153,8 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             _deposit, 
             _lendingStartTime, 
             _lendingExpiration,
-            _redemptionPeriod
+            _redemptionPeriod,
+            tokenStates[_tokenId]
         );
     } 
 
@@ -166,7 +166,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         delete lendingOffers[tokenId];
         tokenStates[tokenId] = TokenState.initialState;
 
-        emit LendingOfferCanceled(tokenId);
+        emit LendingOfferCanceled(tokenId, tokenStates[tokenId]);
     }
 
    function borrowNFT(uint256 tokenId) external payable nonReentrant {
@@ -184,10 +184,9 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         require(success, "Transfer failed");
 
         lendingOffers[tokenId].borrower = msg.sender;
-        lendingOffers[tokenId].isOpen = false;
         tokenStates[tokenId] = TokenState.lendingPeriod;
 
-        emit Rented(tokenId);
+        emit Rented(tokenId, tokenStates[tokenId]);
     }
 
 
@@ -216,7 +215,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         offer.borrower = address(0);
         tokenStates[tokenId] = TokenState.initialState;
         delete lendingOffers[tokenId];
-        emit Redeemed(tokenId);
+        emit Redeemed(tokenId, tokenStates[tokenId]);
     }
 
     function claimNFT(uint256 tokenId) external {
@@ -229,7 +228,8 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         _safeTransfer(offer.owner, offer.borrower, tokenId, "");
         delete lendingOffers[tokenId];
         tokenStates[tokenId] = TokenState.initialState;
-        emit Seized(tokenId);
+        
+        emit Seized(tokenId, tokenStates[tokenId]);
     }
 
     function updateTokenStatus(uint256 tokenId) public {
