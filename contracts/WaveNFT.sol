@@ -58,6 +58,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         uint256 redemptionPeriod;
         address owner;
         address borrower;
+        bool isOpen;
     }
 
     enum TokenState {
@@ -139,7 +140,8 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             lendingExpiration: _lendingExpiration,
             redemptionPeriod: _redemptionPeriod,
             owner: msg.sender,
-            borrower: address(0)
+            borrower: address(0),
+            isOpen: true
         });
 
         lendingOffers[_tokenId] = newOffer;
@@ -163,20 +165,31 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
 
         delete lendingOffers[tokenId];
         tokenStates[tokenId] = TokenState.initialState;
+
         emit LendingOfferCanceled(tokenId);
     }
 
-    function borrowNFT(uint256 tokenId) external payable nonReentrant {
+   function borrowNFT(uint256 tokenId) external payable nonReentrant {
         updateTokenStatus(tokenId);
         //check lending is open
         require(tokenStates[tokenId] == TokenState.lendingOpen, "Not Open");
         require(ownerOf(tokenId) != msg.sender, "borrowing from yourself");
         require(msg.value == lendingOffers[tokenId].deposit, "Insufficient payment");
 
+        // Get the owner before changing the state
+        address originalOwner = ownerOf(tokenId);
+
+        // Transfer the deposit directly to the owner and checks if the transfer was successful
+        (bool success, ) = payable(originalOwner).call{value: msg.value}("");
+        require(success, "Transfer failed");
+
         lendingOffers[tokenId].borrower = msg.sender;
+        lendingOffers[tokenId].isOpen = false;
         tokenStates[tokenId] = TokenState.lendingPeriod;
+
         emit Rented(tokenId);
     }
+
 
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
         require(_exists(tokenId), "ERC721: operator query for nonexistent token");
@@ -196,10 +209,11 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         require(offer.owner == msg.sender, "Not the owner");
         require(msg.value == offer.deposit, "Insufficient deposit return");
 
-        // Refund the deposit to the borrower
-        payable(offer.borrower).transfer(offer.deposit);
-        offer.borrower = address(0);
+        // Transfer the deposit to the borrower
+        (bool success, ) = payable(offer.borrower).call{value: msg.value}("");
+        require(success, "Transfer failed");
 
+        offer.borrower = address(0);
         tokenStates[tokenId] = TokenState.initialState;
         delete lendingOffers[tokenId];
         emit Redeemed(tokenId);
