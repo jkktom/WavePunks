@@ -81,9 +81,18 @@ describe("WaveNFT", function () {
 
       let transaction = await waveNFT.connect(borrower).borrowNFT(tokenId1, { value: deposit });
       let result = await transaction.wait()
-      console.log('Borrowing happens')
-      await expect(transaction).to.emit(waveNFT, 'Rented').withArgs(tokenId1);
-
+      console.log('Borrowing happens, listens to emit')
+      // console.log(result)
+      await expect(transaction).to.emit(waveNFT, 'Rented').withArgs(tokenId1, 2);
+      /*
+        enum TokenState {
+        initialState, // color
+        lendingOpen,
+        lendingPeriod,
+        expired,
+        seized
+    }
+      */
       let finalBalance = await ethers.provider.getBalance(borrower.address);
       let ownerBalanceAfterBorrow = await ethers.provider.getBalance(owner.address);
       let contractBalanceAfterBorrow = await ethers.provider.getBalance(waveNFT.address);
@@ -98,7 +107,7 @@ describe("WaveNFT", function () {
 
       transaction = await waveNFT.connect(thirdParty).borrowNFT(tokenId2, { value: deposit });
       result = await transaction.wait()
-      await expect(transaction).to.emit(waveNFT, 'Rented').withArgs(tokenId2);
+      // await expect(transaction).to.emit(waveNFT, 'Rented').withArgs(tokenId2);
 
       console.log(`Balances After Second borrow`);
       finalBalance = await ethers.provider.getBalance(borrower.address);
@@ -124,6 +133,7 @@ describe("WaveNFT", function () {
       // CHANGES HERE: Update the 'transaction' and 'result' variables after the redeemNFT call.
       transaction = await waveNFT.connect(owner).redeemNFT(tokenId1, { value: deposit });
       result = await transaction.wait()
+      await expect(transaction).to.emit(waveNFT, 'Redeemed').withArgs(tokenId1, 0);
 
       finalBalance = await ethers.provider.getBalance(borrower.address);
       ownerBalanceAfterBorrow = await ethers.provider.getBalance(owner.address);

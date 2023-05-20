@@ -112,6 +112,12 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum WaveNFT.TokenState",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "name": "Expired",
@@ -125,6 +131,12 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum WaveNFT.TokenState",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "name": "LendingOfferCanceled",
@@ -174,6 +186,12 @@
         "internalType": "uint256",
         "name": "redemptionPeriod",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum WaveNFT.TokenState",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "name": "LendingOfferCreated",
@@ -225,6 +243,12 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum WaveNFT.TokenState",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "name": "Redeemed",
@@ -238,6 +262,12 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum WaveNFT.TokenState",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "name": "Rented",
@@ -251,6 +281,12 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum WaveNFT.TokenState",
+        "name": "state",
+        "type": "uint8"
       }
     ],
     "name": "Seized",

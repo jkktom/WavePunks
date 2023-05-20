@@ -62,7 +62,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     }
 
     enum TokenState {
-        initialState, // color
+        initialState, 
         lendingOpen,
         lendingPeriod,
         expired,
@@ -228,7 +228,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         _safeTransfer(offer.owner, offer.borrower, tokenId, "");
         delete lendingOffers[tokenId];
         tokenStates[tokenId] = TokenState.initialState;
-        
+
         emit Seized(tokenId, tokenStates[tokenId]);
     }
 
@@ -240,7 +240,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             if (block.timestamp > offer.lendingExpiration) {
                 delete lendingOffers[tokenId];
                 tokenStates[tokenId] = TokenState.initialState;
-                emit LendingOfferCanceled(tokenId);
+                emit LendingOfferCanceled(tokenId, tokenStates[tokenId]);
             }
         } else if (tokenStates[tokenId] == TokenState.lendingPeriod
             || tokenStates[tokenId] == TokenState.expired
@@ -248,10 +248,10 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             if (block.timestamp > offer.lendingExpiration) {
                 if (block.timestamp > offer.lendingExpiration + offer.redemptionPeriod) {
                     tokenStates[tokenId] = TokenState.seized;
-                    emit Seized(tokenId);
+                    emit Seized(tokenId, tokenStates[tokenId]);
                 } else {
                     tokenStates[tokenId] = TokenState.expired;
-                    emit Expired(tokenId);
+                    emit Expired(tokenId, tokenStates[tokenId]);
                 }
             }
         }
