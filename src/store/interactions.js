@@ -11,7 +11,7 @@ import {
   setMaxSupply, 
   setTotalSupply, 
   setCost, 
-  setUserBalance, 
+  setUserBalance,
   loadTokenCurrentStatus,
   loadOwnerOfToken,
   offersLoaded,
@@ -33,7 +33,11 @@ import {
   redeemFail,
   claimRequest,
   claimSuccess,
-  claimFail
+  claimFail,
+  setFetchedTokensOfAccount,
+  fetchTokensOfAccountRequest,
+  fetchTokensOfAccountSuccess,
+  fetchTokensOfAccountFail
 } from './reducers/nft'
 
 import NFT_ABI from '../abis/WaveNFT.json';
@@ -109,6 +113,21 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
 
   return userBalance;
 }
+// ------------------------------------------------------------------------------
+// Set Tokens of Owner
+
+export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatch) => {
+  try {
+    dispatch(fetchTokensOfAccountRequest())
+    const signer = await provider.getSigner()
+    const tokensOfAccount = await nft.connect(signer).tokensOfOwner(account);
+    dispatch(fetchTokensOfAccountSuccess(tokensOfAccount))
+    
+  } catch (error) {
+    console.error(error);
+    dispatch(fetchTokensOfAccountFail(error.message))
+  }
+};
 
 //Create Offer tab
   // ------------------------------------------------------------------------------
@@ -123,6 +142,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
       await transaction.wait()
       dispatch(createSuccess(transaction.hash))
     } catch (error) {
+      console.error(error); 
       dispatch(createFail())
     }
   };
@@ -139,6 +159,7 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
         await transaction.wait();
       dispatch(mintSuccess(transaction.hash))
     } catch (error) {
+      console.error(error); 
       dispatch(mintFail())
     }
   };
@@ -169,10 +190,10 @@ export const loadUserBalance = async (provider, nft, account, dispatch) => {
       await transaction.wait()
       dispatch(cancelSuccess(transaction.hash))
     } catch (error) {
+      console.error(error); 
       dispatch(cancelFail())
     }
   };
-
 
   // ------------------------------------------------------------------------------
   // Borrow Lending OFFERS

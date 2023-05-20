@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 export const nft = createSlice({
-  name: 'nft ',
+  name: 'nft',
   initialState: {
     contract: null,
     maxSupply: 0,
@@ -12,6 +12,7 @@ export const nft = createSlice({
     baseURI: '',
     offers:[],
     mintedTokens:[],
+    fetchedTokensOfAccount :[],
     tokenCurrentStatus: 'initialState',
     ownerOfToken: '',
     minting: {
@@ -44,6 +45,11 @@ export const nft = createSlice({
       isSuccess: false,
       transactionHash: null
     },
+    fetchingTokensOfAccount: {
+      isFetchingTokensOfAccount: false,
+      isSuccess: false,
+      transactionHash: null
+    },
   },
   reducers: {
     setNFT: (state, action) => {
@@ -66,6 +72,9 @@ export const nft = createSlice({
     },
     setBaseURI: (state, action) => {
       state.baseURI = action.payload
+    },
+    setFetchedTokensOfAccount: (state, action) => {
+      state.fetchedTokensOfAccount = action.payload
     },
     loadTokenCurrentStatus: (state, action) => {
       state.tokenCurrentStatus = action.payload;
@@ -168,6 +177,21 @@ export const nft = createSlice({
       state.claiming.isClaiming = false
       state.claiming.isSuccess = false
       state.claiming.transactionHash = null
+    },
+    fetchTokensOfAccountRequest: (state, action) => {
+      state.fetchingTokensOfAccount.isFetchingTokensOfAccount = true
+      state.fetchingTokensOfAccount.isSuccess = false
+      state.fetchingTokensOfAccount.transactionHash = null
+    },
+    fetchTokensOfAccountSuccess: (state, action) => {
+      state.fetchingTokensOfAccount.isFetchingTokensOfAccount = false
+      state.fetchingTokensOfAccount.isSuccess = true
+      state.fetchedTokensOfAccount = action.payload
+    },
+    fetchTokensOfAccountFail: (state, action) => {
+      state.fetchingTokensOfAccount.isFetchingTokensOfAccount = false
+      state.fetchingTokensOfAccount.isSuccess = false
+      state.fetchingTokensOfAccount.error = action.payload
     }
   }
 })
@@ -180,6 +204,7 @@ export const {
   setUserBalance, 
   setAllowMintingOn, 
   setBaseURI,
+  setFetchedTokensOfAccount,
   loadTokenCurrentStatus,
   loadOwnerOfToken,
   offersLoaded,
@@ -201,7 +226,10 @@ export const {
   redeemFail,
   claimRequest,
   claimSuccess,
-  claimFail
+  claimFail,
+  fetchTokensOfAccountRequest,
+  fetchTokensOfAccountSuccess,
+  fetchTokensOfAccountFail
 } = nft.actions;
 
 export default nft.reducer;

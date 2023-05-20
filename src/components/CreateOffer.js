@@ -10,7 +10,11 @@ import { DateTime, Duration } from "luxon";
 import Loading from './Loading';
 
 
-import { createLendingOffer } from '../store/interactions';
+import { 
+	createLendingOffer,
+	loadFetchedTokensOfAccount 
+} from '../store/interactions';
+
 import MaskedInput from './Mask';
 
 const CreateOffer = () => {
@@ -28,6 +32,7 @@ const CreateOffer = () => {
 	const nft = useSelector(state => state.nft.contract);
 	const isCreating = useSelector(state => state.nft.creating.isCreating);
 	const isSuccess = useSelector(state => state.nft.creating.isSuccess);
+	const tokenIdsOfAccount = useSelector(state => state.nft.fetchedTokensOfAccount);
   const dispatch = useDispatch()	
 
   const handleSubmit = async (event) => {
@@ -77,7 +82,23 @@ const CreateOffer = () => {
 	  const totalSeconds = Duration.fromObject({ hours, minutes, seconds }).as('seconds');
 	  setRedemptionPeriod(totalSeconds);  // Update actual value only if input is valid
 	};
+	
+	const [isTokenFetched, setIsTokenFetched] = useState(false);
 
+	useEffect(() => {
+	  if (provider && nft && account && !isTokenFetched) {
+	    loadFetchedTokensOfAccount(provider, nft, account, dispatch);
+	    setIsTokenFetched(true);
+	  }
+	}, [account, provider, nft, dispatch, isTokenFetched]);
+
+
+	// New useEffect
+	useEffect(() => {
+	  if (tokenIdsOfAccount) {
+	    console.log(tokenIdsOfAccount);
+	  }
+	}, [tokenIdsOfAccount]);
 
 	useEffect(() => {
 	  if (isSuccess) {
@@ -88,18 +109,27 @@ const CreateOffer = () => {
 
   return (
 	  <div>
+	  
 	    <Card style={{ maxWidth: '450px' }} className='mx-auto px-4'>
 	      {isCreating && <Loading />}
 	      {account ? (
 	        <Form onSubmit={handleSubmit} style={{ maxWidth: '450px', margin: '50px auto' }}>
 	          <Row className='my-3'>
-	            <Form.Label className="col-sm-6">
-	              <strong>Token ID:</strong>
-	            </Form.Label>
-	            <div className="col-sm-6">
-	              <Form.Control type="number" value={tokenId} onChange={(e) => setTokenId(e.target.value)} />
-	            </div>
-	          </Row>
+						    <Form.Label className="col-sm-6">
+						        <strong>Token ID:</strong>
+						    </Form.Label>
+						    <div className="col-sm-6">
+						        <Form.Control as="select" value={tokenId} onChange={(e) => setTokenId(e.target.value)}>
+						            {tokenIdsOfAccount.map((tokenId, index) => (
+						                <option key={index} value={tokenId.toString()}>
+						                    {tokenId.toString()}
+						                </option>
+						            ))}
+						        </Form.Control>
+						    </div>
+						</Row>
+
+
 	          	{/*Deposit*/}
 			          <Row className="my-3">
 						      <Form.Label className="col-sm-6">
