@@ -35,6 +35,7 @@ const Status = () => {
     try {
       await redeemToken(provider, nft, tokenId, dispatch)
       alert('Redeem Done. Token Initialized');
+      window.location.reload();
     } catch (error) {
       console.error('Error Redeeming:', error);
       alert('Error Redeeming');
@@ -45,6 +46,7 @@ const Status = () => {
     try {
       await claimToken(provider, nft, tokenId, dispatch)
       alert('Claiming Done. Token Initialized');
+      window.location.reload();
     } catch (error) {
       console.error('Error Claiming:', error);
       alert('Error Claiming');
@@ -124,8 +126,8 @@ const Status = () => {
 
   useEffect(() => {
     if (provider && nft) {
-      loadTokens();
       loadAllOffers(provider, nft, dispatch);
+      loadTokens();
     }
   }, [provider, nft, dispatch]);
 
