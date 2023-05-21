@@ -19,6 +19,7 @@ import MaskedInput from './Mask';
 
 const CreateOffer = () => {
   const [tokenId, setTokenId] = useState('');
+  const [tokenIds, setTokenIds] = useState([]);
   const [deposit, setDeposit] = useState(0.00);
   const [lendingStartTime, setLendingStartTime] = useState("");
   const [lendingExpiration, setLendingExpiration] = useState("");
@@ -57,6 +58,7 @@ const CreateOffer = () => {
 		    lendingExpiration,
 		    redemptionPeriod
 		  });
+
     	const offerTx = await createLendingOffer(provider, nft, tokenId, depositWei, epochLendingStartTime, epochLendingExpiration, redemptionPeriod, dispatch);
     	// const result = await offerTx.wait()
     	console.log(offerTx)
@@ -82,7 +84,7 @@ const CreateOffer = () => {
 	  const totalSeconds = Duration.fromObject({ hours, minutes, seconds }).as('seconds');
 	  setRedemptionPeriod(totalSeconds);  // Update actual value only if input is valid
 	};
-	
+
 	const [isTokenFetched, setIsTokenFetched] = useState(false);
 
 	useEffect(() => {
@@ -92,11 +94,11 @@ const CreateOffer = () => {
 	  }
 	}, [account, provider, nft, dispatch, isTokenFetched]);
 
-
-	// New useEffect
+	// When token IDs are loaded, set the tokenId state variable to the first one
 	useEffect(() => {
-	  if (tokenIdsOfAccount) {
-	    console.log(tokenIdsOfAccount);
+	  if (tokenIdsOfAccount.length > 0) {
+	    setTokenIds(tokenIdsOfAccount.map(tokenId => tokenId.toString()));
+	    setTokenId(tokenIdsOfAccount[0].toString());
 	  }
 	}, [tokenIdsOfAccount]);
 
@@ -120,11 +122,15 @@ const CreateOffer = () => {
 						    </Form.Label>
 						    <div className="col-sm-6">
 						        <Form.Control as="select" value={tokenId} onChange={(e) => setTokenId(e.target.value)}>
-						            {tokenIdsOfAccount.map((tokenId, index) => (
-						                <option key={index} value={tokenId.toString()}>
-						                    {tokenId.toString()}
-						                </option>
-						            ))}
+						            {tokenIds.length ? (
+						            	tokenIds.map((tokenId, index) => (
+												    <option key={index} value={tokenId}>
+												      {tokenId}
+												    </option>
+							            ))
+										    ) : (
+									        <option>No tokens available</option>
+							          )}
 						        </Form.Control>
 						    </div>
 						</Row>
