@@ -126,8 +126,14 @@ const Status = () => {
 
   useEffect(() => {
     if (provider && nft) {
-      loadAllOffers(provider, nft, dispatch);
+      // loadAllOffers(provider, nft, dispatch);
       loadTokens();
+    }
+  }, [provider, nft, dispatch]);
+  
+  useEffect(() => {
+    if (provider && nft) {
+      loadAllOffers(provider, nft, dispatch);
     }
   }, [provider, nft, dispatch]);
 
