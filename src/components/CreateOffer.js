@@ -217,6 +217,42 @@ const CreateOffer = () => {
 	        </p>
 	      )}
 	    </Card>
+	    <div>
+	    	<div 
+				  style={{ 
+				    display: 'flex',
+				    justifyContent: 'center',
+				    flexWrap: 'wrap',
+				    marginTop: '20px',
+				  }}
+				>
+		    	{tokenIds.length ? (
+					  tokenIds.map((tokenId, index) => (
+					    <div 
+					      key={index}
+					      style={{ 
+					        display: 'flex',
+					        flexDirection: 'column',
+					        alignItems: 'center',
+					        width: '90px',
+					        marginLeft: '10px', 
+					        marginRight: '10px' 
+					      }}
+					    >
+				    		<img 
+					        src={`https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${tokenId}.png`}
+					        alt={`NFT #${tokenId}`}
+					        width="90px"
+					        height="90px"
+					      />
+					      <p>No. {tokenId}</p>
+					    </div>
+					  ))
+					) : (
+					  <p>No tokens available</p>
+					)}
+				</div>
+	    </div>
 	  </div>
 	);
 };
