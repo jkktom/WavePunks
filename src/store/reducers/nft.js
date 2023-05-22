@@ -85,6 +85,17 @@ export const nft = createSlice({
     offersLoaded: (state, action) => {
       state.offers = action.payload
     },
+    offerCreated: (state, action) => {
+      state.offers.push({ ...action.payload, state: 'open' });
+    },
+    offerCanceled: (state, action) => {
+      const offer = state.offers.find(offer => offer.tokenId === action.payload.tokenId);
+      if (offer) offer.state = 'canceled';
+    },
+    rented: (state, action) => {
+      const offer = state.offers.find(offer => offer.tokenId === action.payload.tokenId);
+      if (offer) offer.state = 'rented';
+    },
     mintedTokensLoaded: (state, action) => {
       state.mintedTokens = action.payload
     },

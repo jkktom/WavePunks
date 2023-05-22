@@ -1,7 +1,5 @@
 {
-  "31337": {
-    "nft": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-    }
-  }
+  "chainId": 80001,
+  "name": "Mumbai Testnet",
+  "contractAddress": "0xBc6b1aa932799fad3E9680f02484D6B867429DEE"
 }
