@@ -20,6 +20,7 @@ import {
 const Borrow = () => {
   const [tokenId, setTokenId] = useState('');
 	const [tokenStates, setTokenStates] = useState({});
+	const [latestOffers, setLatestOffers] = useState({});
 	const provider = useSelector(state => state.provider.connection)
 	const account = useSelector(state => state.provider.account);
 
@@ -53,10 +54,16 @@ const Borrow = () => {
 	useEffect(() => {
 	  const loadTokenStates = async () => {
 	    const newTokenStates = {};
+	    const updatedOffers = {};
+
 	    for (const offer of offers) {
-	      newTokenStates[offer.args.tokenId.toString()] = await tokenCurrentStatus(provider, nft, offer.args.tokenId.toString(), dispatch);
+	      const tokenId = offer.args.tokenId.toString();
+	      updatedOffers[tokenId] = offer;
+	      newTokenStates[tokenId] = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
 	    }
+
 	    setTokenStates(newTokenStates);
+	    setLatestOffers(updatedOffers);
 	  };
 
 	  loadTokenStates();
@@ -90,7 +97,7 @@ const Borrow = () => {
 						</tr>
           </thead>
           <tbody>
-            {offers && offers.map((offer, index) => {
+            {Object.values(latestOffers).map((offer, index) => {
 					    if(tokenStates[offer.args.tokenId.toString()] === 'Lending is Open') {
 					    	return (
 		              <tr key={index}>
