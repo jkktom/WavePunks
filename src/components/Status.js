@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import Badge from 'react-bootstrap/Badge';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import { ethers } from 'ethers'
-
-import Alert from 'react-bootstrap/Alert';
 
 import Loading from './Loading';
 
@@ -22,25 +17,12 @@ import {
 const Status = () => {
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
-  const [isLoading, setIsLoading] = useState(false); 
 	const provider = useSelector(state => state.provider.connection)
-	const account = useSelector(state => state.provider.account);
 
 	const nft = useSelector(state => state.nft.contract);
 	const mintedTokens = useSelector(state => state.nft.mintedTokens);
   const offers = useSelector(state => state.nft.offers);
   const dispatch = useDispatch();	
-
-  const redeemNFT = async (tokenId) => {
-    try {
-      await redeemToken(provider, nft, tokenId, dispatch)
-      alert('Redeem Done. Token Initialized');
-      window.location.reload();
-    } catch (error) {
-      console.error('Error Redeeming:', error);
-      alert('Error Redeeming');
-    }
-  };
 
   const claimNFT = async (tokenId) => {
     try {
@@ -110,7 +92,6 @@ const Status = () => {
   };
 
   const loadTokens = async () => {
-    setIsLoading(true);
     await loadAllMintedTokens(provider, nft, dispatch);
     const statusPromises = mintedTokens && mintedTokens.map((token, index) => {
       return Promise.all([
@@ -119,14 +100,10 @@ const Status = () => {
       ]);
     });
     await Promise.all(statusPromises);
-    setIsLoading(false);
   }
-
-  const imageUrl = '';
 
   useEffect(() => {
     if (provider && nft) {
-      // loadAllOffers(provider, nft, dispatch);
       loadTokens();
     }
   }, [provider, nft, dispatch]);

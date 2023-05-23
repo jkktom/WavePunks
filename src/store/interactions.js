@@ -58,12 +58,22 @@ export const loadNetwork = async (provider, dispatch) => {
 }
 
 export const loadAccount = async (dispatch) => {
-  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-  const account = ethers.utils.getAddress(accounts[0]);
-  dispatch(setAccount(account));
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (accounts.length === 0) {
+      console.error("No account found. Please connect your Ethereum account.");
+      return null; 
+    }
+    const account = ethers.utils.getAddress(accounts[0]);
+    dispatch(setAccount(account));
 
-  return account;
+    return account;
+  } catch (error) {
+    console.error("Error loading account: ", error);
+    return null;
+  }
 }
+
 
 // ------------------------------------------------------------------------------
 // LOAD CONTRACTS

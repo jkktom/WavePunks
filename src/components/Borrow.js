@@ -4,24 +4,19 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers'
 
-import Alert from 'react-bootstrap/Alert';
-
 import Loading from './Loading';
 
 import {
   loadAllOffers,
   cancelLendingOffer,
   borrowToken,
-  tokenCurrentStatus,
-  redeemToken
+  tokenCurrentStatus
 } from '../store/interactions'
 
 const Borrow = () => {
-  const [tokenId, setTokenId] = useState('');
 	const [tokenStates, setTokenStates] = useState({});
 	const [latestOffers, setLatestOffers] = useState({});
 	const provider = useSelector(state => state.provider.connection)
-	const account = useSelector(state => state.provider.account);
 
 	const nft = useSelector(state => state.nft.contract);
 	const offers = useSelector(state => state.nft.offers);
@@ -140,6 +135,8 @@ const Borrow = () => {
 										</td>
 		              </tr>
 					    	)
+					    } else {
+					    	return null
 					    }
             })}
           </tbody>

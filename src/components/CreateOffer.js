@@ -60,7 +60,6 @@ const CreateOffer = () => {
 		  });
 
     	const offerTx = await createLendingOffer(provider, nft, tokenId, depositWei, epochLendingStartTime, epochLendingExpiration, redemptionPeriod, dispatch);
-    	// const result = await offerTx.wait()
     	console.log(offerTx)
 
 	    alert('Lending offer created successfully');

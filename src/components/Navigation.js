@@ -5,21 +5,20 @@ import Button from 'react-bootstrap/Button'
 import Blockies from 'react-blockies'
 
 import logo from '../logo.png';
-import { loadAccount, loadBalances } from '../store/interactions'
+import { loadAccount } from '../store/interactions'
 
 import config from '../config.json'
 
 const Navigation = () => {
   const chainId = useSelector(state => state.provider.chainId)
-  const account = useSelector(state => state.provider.account)
-  const nft = useSelector(state => state.nft.contract)
+  const connectedAccount = useSelector(state => state.provider.account)
 
   const dispatch = useDispatch()
 
   const connectHandler = async () => {
-    const account = await loadAccount(dispatch)
-    // await loadBalances(nft, account, dispatch)
+    await loadAccount(dispatch)
   }
+
   const networkHandler = async (e) => {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
@@ -50,11 +49,11 @@ const Navigation = () => {
             <option value="0x5">Goerli</option>
             <option value="0x13881">Mumbai</option>
           </Form.Select>
-          {account ? (
+          {connectedAccount ? (
             <Navbar.Text className='d-flex align-items-center'>
-              {account.slice(0, 5) + '...' + account.slice(38, 42)}
+              {connectedAccount.slice(0, 5) + '...' + connectedAccount.slice(38, 42)}
               <Blockies
-                seed={account}
+                seed={connectedAccount}
                 size={10}
                 scale={3}
                 color="#2187D0"
