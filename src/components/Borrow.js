@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
 import { ethers } from 'ethers'
 
 import Alert from 'react-bootstrap/Alert';
