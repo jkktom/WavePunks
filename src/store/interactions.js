@@ -180,8 +180,9 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
 
   export const loadAllOffers = async (provider, nft, dispatch) => {
     const block = await provider.getBlockNumber()
-
-    const offerStream = await nft.queryFilter('LendingOfferCreated', 0, block)
+    const startBlock = block - 1000 < 0 ? 0 : block - 1000;
+    
+    const offerStream = await nft.queryFilter('LendingOfferCreated', startBlock, block)
     const offers = offerStream.map(event => {
       return { hash: event.transactionHash, args:event.args }
     })
@@ -230,8 +231,9 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
 
   export const loadAllMintedTokens = async (provider, nft, dispatch) => {
     const block = await provider.getBlockNumber()
+    const startBlock = block - 1000 < 0 ? 0 : block - 1000;
 
-    const allMintedTokens = await nft.queryFilter('Mint', 0, block)
+    const allMintedTokens = await nft.queryFilter('Mint', startBlock, block)
     const mintedTokens = allMintedTokens.map(event => {
       return { hash: event.transactionHash, args:event.args }
     })
