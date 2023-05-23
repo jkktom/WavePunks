@@ -25,7 +25,8 @@
     "redux-thunk": "^2.4.1",
     "reselect": "^4.1.6",
     "web-vitals": "^2.1.4",
-    "ethers": "^5.7.2"
+    "ethers": "^5.7.2",
+    "dotenv": "^16.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -57,7 +58,6 @@
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
-    "dotenv": "^16.0.3",
     "hardhat": "^2.10.1"
   }
 }
