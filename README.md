@@ -1,11 +1,14 @@
 # The Wave NFT Project
 
-Make Community with NFT while lending it
+WaveNFT is a blockchain-powered solution facilitating NFT minting and lending. It automates the lending cycle, tracking ownership and status changes. Essentially, it's an efficient, decentralized NFT lending library enhancing the utility of your NFTs.
 
-Follow step
+Follow step to run
 
 ```shell
-Gather customers
-Rent NFTs to investor/borrowers
-Trade NFTs to market
+Download codes
+install npx - npx hardhat install
+run hardhat - npx hardhat node
+deploy npx hardhat run scripts/deploy.js
+ 
+
 ```
