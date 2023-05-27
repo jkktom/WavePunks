@@ -18,11 +18,6 @@
       },
       {
         "internalType": "uint256",
-        "name": "_maxSupply",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "_allowMintingOn",
         "type": "uint256"
       },
@@ -560,19 +555,6 @@
         "internalType": "address",
         "name": "borrower",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",

@@ -11,6 +11,7 @@ import {
   setTotalSupply, 
   setCost, 
   setUserBalance,
+  setTokenURI,
   loadTokenCurrentStatus,
   loadOwnerOfToken,
   offersLoaded,
@@ -246,6 +247,15 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
     const tokenStatusString = tokenStateMapping[tokenStatus];
     dispatch(loadTokenCurrentStatus(tokenStatusString));
     return tokenStatusString;
+  }
+
+  //------------------------------------------------------------------------------
+  // LOAD Token Status
+  export const loadTokenURI = async (provider, nft, tokenId, dispatch) => {
+    
+    const tokenURI = await nft.tokenURI(tokenId);
+    dispatch(setTokenURI(tokenURI));
+    return tokenURI;
   }
 
   // ------------------------------------------------------------------------------

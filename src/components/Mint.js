@@ -11,6 +11,7 @@ import {
   mint,
   loadTotalSupply, 
   loadCost, 
+  loadTokenURI, 
   loadUserBalance
 } from '../store/interactions'
 
@@ -25,13 +26,10 @@ const Mint = () => {
   const totalSupply = useSelector(state => state.nft.totalSupply)
   const cost = useSelector(state => state.nft.cost)
   const userBalance = useSelector(state => state.nft.userBalance)
+  const tokenURI = useSelector(state => state.nft.tokenURI);
 
-  const [isWaiting, setIsWaiting] = useState(false)\
+  const [isWaiting, setIsWaiting] = useState(false)
   
-  const imageUrl = userBalance > 0
-    ? `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply).toString()}.png`
-    : `../preview.gif`
-
   const dispatch = useDispatch()
 
   const loadData  = async ()=> {
@@ -43,11 +41,21 @@ const Mint = () => {
     await loadUserBalance(provider, nft, account, dispatch);
   }
 
+  const imageUrl = userBalance > 0 ? 
+    `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply+1)%15}.png`
+    : '../preview.gif';
+
   useEffect(() => {
     if(account && nft) {
       loadData();
     }
   }, [account, nft]);
+
+  useEffect(() => {
+    if (userBalance > 0) {
+      loadTokenURI(provider, nft, totalSupply.toString(), dispatch);
+    }
+  }, [userBalance, totalSupply, provider, nft, dispatch]);
 
   const handleMint = async (e) => {
     e.preventDefault();

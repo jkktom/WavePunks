@@ -17,6 +17,7 @@ import {
 const Status = () => {
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
+  const [imageUrls, setImageUrls] = useState([]);
 	const provider = useSelector(state => state.provider.connection)
 
 	const nft = useSelector(state => state.nft.contract);
@@ -38,6 +39,10 @@ const Status = () => {
   const setTokenStatus = (tokenId, status) => {
     setStatus(prevStatus => ({ ...prevStatus, [tokenId]: status }));
   }
+
+  const getImageUrl = (tokenId) => {
+    return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
+  };
 
   //Optimistic Feature Using Javascript
   const checkStatus = async (tokenId) => {
@@ -107,6 +112,12 @@ const Status = () => {
       loadTokens();
     }
   }, [provider, nft, dispatch]);
+
+   useEffect(() => {
+    if (mintedTokens.length > 0) {
+      setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
+    }
+  }, [mintedTokens]);
   
   useEffect(() => {
     if (provider && nft) {
@@ -161,7 +172,7 @@ const Status = () => {
 								<td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>
                   <img
-                    src={`https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${token.args.tokenId.toString()}.png`}
+                    src={imageUrls[token.args.tokenId.toString()-1]}
                     alt="Wave NFTs"
                     width="69px"
                     height="69px"

@@ -9,6 +9,7 @@ export const nft = createSlice({
     userBalance: 0,
     allowMintingOn: 0,
     baseURI: '',
+    tokenURI: '',
     offers:[],
     mintedTokens:[],
     fetchedTokensOfAccount :[],
@@ -68,6 +69,9 @@ export const nft = createSlice({
     },
     setBaseURI: (state, action) => {
       state.baseURI = action.payload
+    },
+    setTokenURI: (state, action) => {
+      state.tokenURI = action.payload
     },
     setFetchedTokensOfAccount: (state, action) => {
       state.fetchedTokensOfAccount = action.payload
@@ -210,6 +214,7 @@ export const {
   setUserBalance, 
   setAllowMintingOn, 
   setBaseURI,
+  setTokenURI,
   setFetchedTokensOfAccount,
   loadTokenCurrentStatus,
   loadOwnerOfToken,

@@ -20,12 +20,14 @@ import MaskedInput from './Mask';
 const CreateOffer = () => {
   const [tokenId, setTokenId] = useState('');
   const [tokenIds, setTokenIds] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
   const [deposit, setDeposit] = useState(0.00);
   const [lendingStartTime, setLendingStartTime] = useState("");
   const [lendingExpiration, setLendingExpiration] = useState("");
   const [redemptionPeriod, setRedemptionPeriod] = useState("");
 	const [redemptionPeriodDisplay, setRedemptionPeriodDisplay] = useState("");
 	const [inputError, setInputError] = useState(false);
+	const [isTokenFetched, setIsTokenFetched] = useState(false);
 
   const provider = useSelector(state => state.provider.connection)
   const account = useSelector(state => state.provider.account);
@@ -84,7 +86,11 @@ const CreateOffer = () => {
 	  setRedemptionPeriod(totalSeconds);  // Update actual value only if input is valid
 	};
 
-	const [isTokenFetched, setIsTokenFetched] = useState(false);
+	const getImageUrl = (tokenId) => {
+	  return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
+	};
+
+	
 
 	useEffect(() => {
 	  if (provider && nft && account && !isTokenFetched) {
@@ -100,6 +106,12 @@ const CreateOffer = () => {
 	    setTokenId(tokenIdsOfAccount[0].toString());
 	  }
 	}, [tokenIdsOfAccount]);
+
+	useEffect(() => {
+	  if (tokenIds.length > 0) {
+	    setImageUrls(tokenIds.map(tokenId => getImageUrl(parseInt(tokenId))));
+	  }
+	}, [tokenIds]);
 
 	useEffect(() => {
 	  if (isSuccess) {
@@ -225,26 +237,26 @@ const CreateOffer = () => {
 				    marginTop: '20px',
 				  }}
 				>
-		    	{tokenIds.length ? (
-					  tokenIds.map((tokenId, index) => (
-					    <div 
+		    	{imageUrls.length ? (
+					  imageUrls.map((imageUrl, index) => (
+					    <div
 					      key={index}
-					      style={{ 
+					      style={{
 					        display: 'flex',
 					        flexDirection: 'column',
 					        alignItems: 'center',
 					        width: '90px',
-					        marginLeft: '10px', 
-					        marginRight: '10px' 
+					        marginLeft: '10px',
+					        marginRight: '10px'
 					      }}
 					    >
-				    		<img 
-					        src={`https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${tokenId}.png`}
-					        alt={`NFT #${tokenId}`}
+					      <img
+					        src={imageUrl}
+					        alt={`NFT #${tokenIds[index]}`}
 					        width="90px"
 					        height="90px"
 					      />
-					      <p>No. {tokenId}</p>
+					      <p>No. {tokenIds[index]}</p>
 					    </div>
 					  ))
 					) : (
