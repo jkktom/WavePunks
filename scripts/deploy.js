@@ -9,14 +9,13 @@ const hre = require("hardhat");
 async function main() {
   const NAME = 'WaveNFT'
   const SYMBOL = 'WNFT'
-  const COST = ethers.utils.parseUnits('10', 'ether')
-  const MAX_SUPPLY = 15
-  const NFT_MINT_DATE = (Date.now() + 10000).toString().slice(0, 10)
+  const COST = ethers.utils.parseUnits('0.01', 'ether')
+  const NFT_MINT_DATE = (Date.now() + 1000).toString().slice(0, 10)
   const IPFS_METADATA_URI = 'https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmeqrB4mogTGtAmn1TDAvEUKpPTRUsjBZAaagyK7hp5vPv/'
 
   // Deploy NFT
   const NFT = await hre.ethers.getContractFactory('WaveNFT')
-  let nft = await NFT.deploy(NAME, SYMBOL, COST, MAX_SUPPLY, NFT_MINT_DATE, IPFS_METADATA_URI)
+  let nft = await NFT.deploy(NAME, SYMBOL, COST, NFT_MINT_DATE, IPFS_METADATA_URI)
 
   await nft.deployed()
   console.log(`NFT deployed to: ${nft.address}\n`)

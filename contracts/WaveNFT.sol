@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     using Strings for uint256;
     uint256 public cost;
-    uint256 public maxSupply;
     uint256 public allowMintingOn;
     string public baseURI;
     string public constant baseExtension = ".json";
@@ -42,12 +41,10 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         string memory _name,
         string memory _symbol,
         uint256 _cost,
-        uint256 _maxSupply,
         uint256 _allowMintingOn,
         string memory _baseURI
     ) ERC721(_name, _symbol) {
         cost = _cost;
-        maxSupply = _maxSupply;
         allowMintingOn = _allowMintingOn;
         baseURI = _baseURI;
     }
@@ -76,7 +73,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
     function mint() public payable nonReentrant {
         require(block.timestamp >= allowMintingOn, "Minting has not started yet");
         require(msg.value == cost, "Incorrect payment");
-        require(totalSupply() < maxSupply, "Max supply reached");
 
         // Create tokens
         uint256 tokenId = totalSupply() + 1;
@@ -96,7 +92,9 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         returns(string memory)
     {
         require(_exists(_tokenId), 'token does not exist');
-        return(string(abi.encodePacked(baseURI, _tokenId.toString(), baseExtension)));
+        uint256 adjustedTokenId = (_tokenId + 1) % 15 + 1;
+
+        return(string(abi.encodePacked(baseURI, adjustedTokenId.toString(), baseExtension)));
     }
 
     function tokensOfOwner(address _owner) public view returns(uint256[] memory) {

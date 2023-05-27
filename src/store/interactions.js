@@ -8,7 +8,6 @@ import {
 
 import {
   setNFT,
-  setMaxSupply, 
   setTotalSupply, 
   setCost, 
   setUserBalance,
@@ -84,15 +83,6 @@ export const loadNFT = async (provider, chainId, dispatch) => {
   dispatch(setNFT(nft));
 
   return nft;
-}
-// ------------------------------------------------------------------------------
-// LOAD MaxSupply
-
-export const loadMaxSupply = async (provider, nft, dispatch) => {
-  const maxSupply = await nft.maxSupply();
-  dispatch(setMaxSupply(maxSupply));
-
-  return maxSupply;
 }
 // ------------------------------------------------------------------------------
 // LOAD TotalSupply

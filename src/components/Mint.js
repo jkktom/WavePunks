@@ -9,7 +9,6 @@ import Spinner from 'react-bootstrap/Spinner';
 import {
   loadAccount,
   mint,
-  loadMaxSupply, 
   loadTotalSupply, 
   loadCost, 
   loadUserBalance
@@ -23,14 +22,11 @@ const Mint = () => {
   const account  = useSelector(state => state.provider.account)
   const nft = useSelector(state => state.nft.contract)
 
-  const maxSupply = useSelector(state => state.nft.maxSupply)
   const totalSupply = useSelector(state => state.nft.totalSupply)
   const cost = useSelector(state => state.nft.cost)
   const userBalance = useSelector(state => state.nft.userBalance)
 
-  const [isWaiting, setIsWaiting] = useState(false)
-  // const [isLoading, setIsLoading] = useState(true)
-  // const [revealTime, setRevealTime] = useState(0)
+  const [isWaiting, setIsWaiting] = useState(false)\
   
   const imageUrl = userBalance > 0
     ? `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply).toString()}.png`
@@ -40,9 +36,8 @@ const Mint = () => {
 
   const loadData  = async ()=> {
     // Fetch account
-    // Fetch maxSupply,totalSupply,cost,account balance
+    // Fetch totalSupply,cost,account balance
     const account = await loadAccount(dispatch);
-    await loadMaxSupply(provider, nft, dispatch);
     await loadTotalSupply(provider, nft, dispatch);
     await loadCost(provider, nft, dispatch);
     await loadUserBalance(provider, nft, account, dispatch);
@@ -89,7 +84,7 @@ const Mint = () => {
         <Col>
           <div className='text-center'>
             <div className='text-center'>
-              <p><strong>Available to Mint:</strong> {maxSupply - totalSupply}</p>
+              <p><strong>Available to Mint:</strong> infinite</p>
               <p><strong>Cost to Mint:</strong> {ethers.utils.formatUnits(cost, 'ether')} ETH</p>
               <p><strong>You own:</strong> {userBalance.toString()}</p>
             </div>

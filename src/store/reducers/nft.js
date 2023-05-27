@@ -4,7 +4,6 @@ export const nft = createSlice({
   name: 'nft',
   initialState: {
     contract: null,
-    maxSupply: 0,
     totalSupply: 0,
     cost: 0,
     userBalance: 0,
@@ -54,9 +53,6 @@ export const nft = createSlice({
   reducers: {
     setNFT: (state, action) => {
       state.contract = action.payload
-    },
-    setMaxSupply: (state, action) => {
-      state.maxSupply = action.payload
     },
     setTotalSupply: (state, action) => {
       state.totalSupply = action.payload
@@ -209,7 +205,6 @@ export const nft = createSlice({
 
 export const { 
   setNFT, 
-  setMaxSupply, 
   setTotalSupply, 
   setCost, 
   setUserBalance, 
