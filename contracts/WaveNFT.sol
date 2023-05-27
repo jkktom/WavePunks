@@ -203,7 +203,7 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
         updateTokenStatus(tokenId);
         require(tokenStates[tokenId] == TokenState.expired, "Not yet expired");
         LendingOffer storage offer = lendingOffers[tokenId];
-        require(offer.owner == msg.sender, "Not the owner");
+        require(ERC721.ownerOf(tokenId) == msg.sender, "Not the owner");
         require(msg.value == offer.deposit, "Insufficient deposit return");
 
         // Transfer the deposit to the borrower
@@ -254,7 +254,6 @@ contract WaveNFT is ERC721Enumerable, ReentrancyGuard, Ownable {
             }
         }
     }
-
 }
 
 
