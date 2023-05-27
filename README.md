@@ -1,8 +1,8 @@
 # WaveNFT: A Decentralized NFT Minting and Lending Platform
 
-WaveNFT is a dynamic blockchain-enabled platform that empowers users to mint and lend Non-Fungible Tokens (NFTs). By intelligently automating the lending cycle, it efficiently tracks ownership and state changes, thereby providing an enriched user experience. Essentially, WaveNFT serves as an intuitive, decentralized lending library that enhances the usability and flexibility of your NFTs.
+WaveNFT is a dynamic blockchain-enabled platform that empowers users to mint and lend Non-Fungible Tokens (NFTs). By intelligently automating the lending cycle, it efficiently tracks ownership and state changes, thereby providing stable evironment for renters / lenders. Essentially, WaveNFT serves as an intuitive, decentralized lending feature that enhances the usability and flexibility of your NFTs.
 
-Leveraging a robust technology stack, including Hardhat, Solidity, React, and Redux, WaveNFT offers a sophisticated and secure platform for NFT enthusiasts.
+Leveraging a robust technology stack, including Hardhat, Solidity, React, and Redux, WaveNFT offers a sophisticated and secure two way market for NFT Owners and Renters.
 
 ## Getting Started
 

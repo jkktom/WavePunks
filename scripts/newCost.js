@@ -6,7 +6,7 @@ async function main() {
   const ownerPrivateKey = "89f0357133979d96a8e20a6c1d2355e04d95394aea8b6102cbc8225beb35cfc0";
 
   // New cost value
-  const NEW_COST = ethers.utils.parseUnits('0.1', 'ether');
+  const NEW_COST = ethers.utils.parseUnits('0.01', 'ether');
 
   // We get the contract to deploy
   const NFT = await hre.ethers.getContractFactory('WaveNFT')
