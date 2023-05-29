@@ -32,18 +32,25 @@ const Mint = () => {
   
   const dispatch = useDispatch()
 
-  const loadData = async () => {
+  const loadAccountData = async () => {
     try {
-      const account = await loadAccount(dispatch);
-      await loadTotalSupply(provider, nft, dispatch);
-      await loadCost(provider, nft, dispatch);
+      await loadAccount(dispatch);
       await loadUserBalance(provider, nft, account, dispatch);
     } catch (error) {
-      console.error('Error loading data:', error);
-      alert('Error loading data');
+      console.error('Error loading account data:', error);
+      alert('Error loading account data');
     }
   };
 
+  const loadNFTData = async () => {
+    try {
+      await loadTotalSupply(provider, nft, dispatch);
+      await loadCost(provider, nft, dispatch);
+    } catch (error) {
+      console.error('Error loading NFT data:', error);
+      alert('Error loading NFT data');
+    }
+  };
 
   const imageUrl = userBalance > 0 ? 
     `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply+1)%15}.png`
@@ -51,7 +58,8 @@ const Mint = () => {
 
   useEffect(() => {
     if(account && nft) {
-      loadData();
+      loadAccountData();
+      loadNFTData();
     }
   }, [account, nft]);
 
@@ -67,8 +75,8 @@ const Mint = () => {
     try {
       await mint(provider, nft, dispatch);
       alert('Minting success');
-      // Refresh the page after successful minting
-      window.location.reload();
+      setIsWaiting(false);
+      loadAccountData();
     } catch (error) {
       console.error('Error minting:', error);
       alert('Error minting');
