@@ -69,7 +69,7 @@ const Mint = () => {
       alert('Minting success');
       // Refresh the page after successful minting
       window.location.reload();
-    } catch {
+    } catch (error) {
       console.error('Error minting:', error);
       alert('Error minting');
       setIsWaiting(false);
