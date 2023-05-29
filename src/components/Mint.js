@@ -34,17 +34,16 @@ const Mint = () => {
 
   const loadData = async () => {
     try {
-      const account = loadAccount(dispatch);
-      await Promise.all([
-        loadTotalSupply(provider, nft, dispatch),
-        loadCost(provider, nft, dispatch),
-        loadUserBalance(provider, nft, account, dispatch)
-      ]);
+      const account = await loadAccount(dispatch);
+      await loadTotalSupply(provider, nft, dispatch);
+      await loadCost(provider, nft, dispatch);
+      await loadUserBalance(provider, nft, account, dispatch);
     } catch (error) {
       console.error('Error loading data:', error);
       alert('Error loading data');
     }
   };
+
 
   const imageUrl = userBalance > 0 ? 
     `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply+1)%15}.png`
