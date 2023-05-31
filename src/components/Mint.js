@@ -53,15 +53,28 @@ const Mint = () => {
 
   useEffect(() => {
     if (account && nft && !isDataLoaded) {
+      const loadData = async () => {
+        try {
+          await Promise.all([
+            loadTotalSupply(provider, nft, dispatch),
+            loadCost(provider, nft, dispatch),
+            loadUserBalance(provider, nft, account, dispatch),
+          ]);
+          setIsDataLoaded(true);
+        } catch (error) {
+          console.error('Error loading data:', error);
+          alert('Error loading data');
+        }
+      };
+
       loadData();
     }
-  }, [account, nft, isDataLoaded]);
 
-  useEffect(() => {
     if (userBalance > 0) {
       loadTokenURI(provider, nft, totalSupply.toString(), dispatch);
     }
-  }, [userBalance, totalSupply, provider, nft, dispatch]);
+  }, [account, nft, userBalance, totalSupply, provider, dispatch, isDataLoaded]);
+
 
   const handleMint = async (e) => {
     e.preventDefault();
