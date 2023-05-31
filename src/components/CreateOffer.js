@@ -93,134 +93,136 @@ const CreateOffer = () => {
 	
 
 	useEffect(() => {
-	  if (provider && nft && account && !isTokenFetched) {
-	    loadFetchedTokensOfAccount(provider, nft, account, dispatch);
-	    setIsTokenFetched(true);
-	  }
-	}, [account, provider, nft, dispatch, isTokenFetched]);
+	  const loadData = async () => {
+	    try {
+	      if (provider && nft && account && !isTokenFetched) {
+	        await loadFetchedTokensOfAccount(provider, nft, account, dispatch);
+	        setIsTokenFetched(true);
+	      }
 
-	// When token IDs are loaded, set the tokenId state variable to the first one
-	useEffect(() => {
-	  if (tokenIdsOfAccount.length > 0) {
-	    setTokenIds(tokenIdsOfAccount.map(tokenId => tokenId.toString()));
-	    setTokenId(tokenIdsOfAccount[0].toString());
-	  }
-	}, [tokenIdsOfAccount]);
+	      if (tokenIdsOfAccount.length > 0) {
+	        setTokenIds(tokenIdsOfAccount.map(tokenId => tokenId.toString()));
+	        setTokenId(tokenIdsOfAccount[0].toString());
+	        setImageUrls(tokenIdsOfAccount.map(tokenId => getImageUrl(parseInt(tokenId))));
+	      }
+	    } catch (error) {
+	      console.error('Error loading data:', error);
+	      alert('Error loading data');
+	    }
+	  };
 
-	useEffect(() => {
-	  if (tokenIds.length > 0) {
-	    setImageUrls(tokenIds.map(tokenId => getImageUrl(parseInt(tokenId))));
-	  }
-	}, [tokenIds]);
+	  loadData();
+	}, [provider, nft, account, dispatch, isTokenFetched, tokenIdsOfAccount]);
 
-	useEffect(() => {
-	  if (isSuccess) {
-	    alert('Offer created successfully!');
-	    window.location.reload();
-	  }
-	}, [isSuccess]);
 
   return (
 	  <div>
 	  
 	    <Card style={{ maxWidth: '450px' }} className='mx-auto px-4'>
-	      {isCreating && <Loading />}
 	      {account ? (
 	        <Form onSubmit={handleSubmit} style={{ maxWidth: '450px', margin: '50px auto' }}>
-	          <Row className='my-3'>
-						    <Form.Label className="col-sm-6">
-						        <strong>Token ID:</strong>
-						    </Form.Label>
-						    <div className="col-sm-6">
-						        <Form.Control as="select" value={tokenId} onChange={(e) => setTokenId(e.target.value)}>
-						            {tokenIds.length ? (
-						            	tokenIds.map((tokenId, index) => (
-												    <option key={index} value={tokenId}>
-												      {tokenId}
-												    </option>
-							            ))
-										    ) : (
-									        <option>No tokens available</option>
-							          )}
-						        </Form.Control>
-						    </div>
-						</Row>
+	        	{isCreating? (
+					    <div className="text-center">
+					      <Loading />
+					    </div>
+	        	) : (
+	        		<>
+			          <Row className='my-3'>
+								    <Form.Label className="col-sm-6">
+								        <strong>Token ID:</strong>
+								    </Form.Label>
+								    <div className="col-sm-6">
+								        <Form.Control as="select" value={tokenId} onChange={(e) => setTokenId(e.target.value)}>
+								            {tokenIds.length ? (
+								            	tokenIds.map((tokenId, index) => (
+														    <option key={index} value={tokenId}>
+														      {tokenId}
+														    </option>
+									            ))
+												    ) : (
+											        <option>No tokens available</option>
+									          )}
+								        </Form.Control>
+								    </div>
+								</Row>
 
 
-	          	{/*Deposit*/}
-			          <Row className="my-3">
-						      <Form.Label className="col-sm-6">
-						        <strong>Deposit Amount (ETH):</strong>
-						      </Form.Label>
-						      <div className="col-sm-6">
-						        <Form.Control
-										  type="text"
-										  pattern="^\d*(\.\d{0,2})?$"
-										  value={deposit}
-										  onChange={(e) => {
-										    const depositAmount = e.target.value;
-										    if (depositAmount === "") {
-										      setDeposit(depositAmount);
-										      setInputError(false);
-										    } else if (/^\d*(\.\d{0,2})?$/.test(depositAmount)) {
-										      setDeposit(depositAmount);
-										      setInputError(false);
-										    } else {
-										      setInputError(true);
-										    }
-										  }}
-										  isInvalid={inputError}
-										/>
-						      </div>
-						    </Row>
-						{/*lending start Time */}
-		          <Row className='my-3'>
-	              <Form.Label className="col-sm-6">
-	                <strong>Lending Start Time:</strong>
-	              </Form.Label>
-	              <div className="col-sm-6">
-	                <MaskedInput
-	                  mask="99-99-9999 99:99"
-	                  placeholder="MM-DD-YYYY HH:mm"
-	                  className="form-control"
-	                  value={lendingStartTime}
-	                  onChange={(e) => setLendingStartTime(e.target.value)}
-	                />
-	              </div>
-	            </Row>
-	          {/*lending Expiration */}
-		          <Row className='my-3'>
-	              <Form.Label className="col-sm-6">
-	                <strong>Lending Expiration Time:</strong>
-	              </Form.Label>
-	              <div className="col-sm-6">
-	                <MaskedInput
-	                  mask="99-99-9999 99:99"
-	                  placeholder="MM-DD-YYYY HH:mm"
-	                  className="form-control"
-	                  value={lendingExpiration}
-	                  onChange={(e) => setLendingExpiration(e.target.value)}
-	                />
-	              </div>
-	            </Row>
-	          {/*Redemption setting*/}
-		          <Row className='my-3'>
-	              <Form.Label className="col-sm-6">
-	                <strong>Redemption Period (hh:mm:ss):</strong>
-	              </Form.Label>
-	              <div className="col-sm-6">
-	                <MaskedInput
-									  mask="99:99:99"
-									  placeholder="HH:mm:ss"
-									  className="form-control"
-									  value={redemptionPeriodDisplay}  // Use display value here
-									  onChange={handleRedemptionPeriodChange}
-									/>
-	              </div>
-	            </Row>
-	            <Row className='my-3'>
-		            <Button type="submit">Create Offer</Button>
-		          </Row>
+			          	{/*Deposit*/}
+					          <Row className="my-3">
+								      <Form.Label className="col-sm-6">
+								        <strong>Deposit Amount (ETH):</strong>
+								      </Form.Label>
+								      <div className="col-sm-6">
+								        <Form.Control
+												  type="text"
+												  pattern="^\d*(\.\d{0,2})?$"
+												  value={deposit}
+												  onChange={(e) => {
+												    const depositAmount = e.target.value;
+												    if (depositAmount === "") {
+												      setDeposit(depositAmount);
+												      setInputError(false);
+												    } else if (/^\d*(\.\d{0,2})?$/.test(depositAmount)) {
+												      setDeposit(depositAmount);
+												      setInputError(false);
+												    } else {
+												      setInputError(true);
+												    }
+												  }}
+												  isInvalid={inputError}
+												/>
+								      </div>
+								    </Row>
+								{/*lending start Time */}
+				          <Row className='my-3'>
+			              <Form.Label className="col-sm-6">
+			                <strong>Lending Start Time:</strong>
+			              </Form.Label>
+			              <div className="col-sm-6">
+			                <MaskedInput
+			                  mask="99-99-9999 99:99"
+			                  placeholder="MM-DD-YYYY HH:mm"
+			                  className="form-control"
+			                  value={lendingStartTime}
+			                  onChange={(e) => setLendingStartTime(e.target.value)}
+			                />
+			              </div>
+			            </Row>
+			          {/*lending Expiration */}
+				          <Row className='my-3'>
+			              <Form.Label className="col-sm-6">
+			                <strong>Lending Expiration Time:</strong>
+			              </Form.Label>
+			              <div className="col-sm-6">
+			                <MaskedInput
+			                  mask="99-99-9999 99:99"
+			                  placeholder="MM-DD-YYYY HH:mm"
+			                  className="form-control"
+			                  value={lendingExpiration}
+			                  onChange={(e) => setLendingExpiration(e.target.value)}
+			                />
+			              </div>
+			            </Row>
+			          {/*Redemption setting*/}
+				          <Row className='my-3'>
+			              <Form.Label className="col-sm-6">
+			                <strong>Redemption Period (hh:mm:ss):</strong>
+			              </Form.Label>
+			              <div className="col-sm-6">
+			                <MaskedInput
+											  mask="99:99:99"
+											  placeholder="HH:mm:ss"
+											  className="form-control"
+											  value={redemptionPeriodDisplay}  // Use display value here
+											  onChange={handleRedemptionPeriodChange}
+											/>
+			              </div>
+			            </Row>
+			            <Row className='my-3'>
+				            <Button type="submit">Create Offer</Button>
+				          </Row>
+	        		</>
+	        	)}
 	        </Form>
 	      ) : (
 	        <p className='d-flex justify-content-center align-items-center' style={{ height: '300px' }}>
