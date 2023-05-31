@@ -29,6 +29,7 @@ const Mint = () => {
   const tokenURI = useSelector(state => state.nft.tokenURI);
 
   const [isWaiting, setIsWaiting] = useState(false)
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   
   const dispatch = useDispatch()
 
@@ -36,6 +37,7 @@ const Mint = () => {
     try {
       await loadAccount(dispatch);
       await loadUserBalance(provider, nft, account, dispatch);
+      setIsDataLoaded(true);
     } catch (error) {
       console.error('Error loading account data:', error);
       alert('Error loading account data');
@@ -76,6 +78,7 @@ const Mint = () => {
       await mint(provider, nft, dispatch);
       alert('Minting success');
       setIsWaiting(false);
+      setIsDataLoaded(false);
       loadAccountData();
     } catch (error) {
       console.error('Error minting:', error);
