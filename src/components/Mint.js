@@ -15,13 +15,20 @@ import {
   loadUserBalance
 } from '../store/interactions'
 
+import { useLoadData } from './Data';
+
 // IMG
 import preview from '../preview.gif';
 
 const Mint = () => {
-  const provider = useSelector(state => state.provider.connection)
-  const account  = useSelector(state => state.provider.account)
-  const nft = useSelector(state => state.nft.contract)
+  // const provider = useSelector(state => state.provider.connection)
+  // const account  = useSelector(state => state.provider.account)
+  // const nft = useSelector(state => state.nft.contract)
+  const {
+    provider,
+    account,
+    nft
+  } = useLoadData();
 
   const totalSupply = useSelector(state => state.nft.totalSupply)
   const cost = useSelector(state => state.nft.cost)
