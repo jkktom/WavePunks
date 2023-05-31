@@ -60,8 +60,8 @@ const Mint = () => {
 
   useEffect(() => {
     if(account && nft) {
-      loadAccountData();
       loadNFTData();
+      loadAccountData();
     }
   }, [account, nft]);
 
