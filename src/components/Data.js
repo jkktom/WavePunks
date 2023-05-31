@@ -20,48 +20,62 @@ import {
 } from '../store/interactions';
 
 export const useLoadData = () => {
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const provider = useSelector(state => state.provider.connection);
   const account = useSelector(state => state.provider.account);
   const nft = useSelector(state => state.nft.contract);
-  // const totalSupply = useSelector(state => state.nft.totalSupply);
-  // const cost = useSelector(state => state.nft.cost);
-  // const userBalance = useSelector(state => state.nft.userBalance);
-  // const tokenURI = useSelector(state => state.nft.tokenURI);
-  // const offers = useSelector(state => state.nft.offers);
-  // const mintedTokens = useSelector(state => state.nft.mintedTokens);
+  const dispatch = useDispatch();
+  const [totalSupply, setTotalSupply] = useState(0);
+  const [cost, setCost] = useState(0);
+  const [userBalance, setUserBalance] = useState(0);
+  const [tokenURI, setTokenURI] = useState('');
 
-  // const dispatch = useDispatch();
+  const loadBlockchainData = async () => {
+    setIsLoading(true)
+    try {
+      const loadedProvider = await loadProvider(dispatch);
+      const chainId = await loadNetwork(loadedProvider, dispatch);
+      const loadedNFT = await loadNFT(loadedProvider, chainId, dispatch);
+
+      const loadedTotalSupply = await loadTotalSupply(loadedProvider, loadedNFT, dispatch);
+      setTotalSupply(loadedTotalSupply);
+
+      const loadedCost = await loadCost(loadedProvider, loadedNFT, dispatch);
+      setCost(loadedCost);
+      
+      let loadedUserBalance = 0;
+      if (account && loadedNFT) {
+        loadedUserBalance = await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
+      }
+      setUserBalance(loadedUserBalance);
+
+
+      const loadedTokenURI = await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
+      setTokenURI(loadedTokenURI);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading blockchain data:', error);
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const loadData = async () => {
-        // loadAccount(dispatch),
-        // loadTotalSupply(provider, nft, dispatch),
-        // loadCost(provider, nft, dispatch),
-        // loadUserBalance(provider, nft, account, dispatch),
-        // loadAllOffers(provider, nft, dispatch),
-        // tokenCurrentStatus(provider, nft, dispatch),
-        // fetchOwnerOfToken(provider, nft, dispatch),
-        // redeemToken(provider, nft, dispatch),
-        // claimToken(provider, nft, dispatch),
-        // loadAllMintedTokens(provider, nft, dispatch)
+    if (!isLoading) {
+      loadBlockchainData()
+    }
+  }, [isLoading]);
 
-      // if (userBalance > 0) {
-      //   await loadTokenURI(provider, nft, totalSupply.toString(), dispatch);
-      // }
-    };
 
-    loadData();
-  }, [provider]);
-//, account, nft, totalSupply, userBalance, dispatch
   return {
     provider,
     account,
-    nft
-    // totalSupply,
-    // cost,
-    // userBalance,
-    // tokenURI,
-    // offers,
-    // mintedTokens
+    nft,
+    dispatch,
+    totalSupply,
+    cost,
+    userBalance,
+    tokenURI
   };
 };

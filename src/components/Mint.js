@@ -21,67 +21,19 @@ import { useLoadData } from './Data';
 import preview from '../preview.gif';
 
 const Mint = () => {
-  // const provider = useSelector(state => state.provider.connection)
-  // const account  = useSelector(state => state.provider.account)
-  // const nft = useSelector(state => state.nft.contract)
   const {
     provider,
     account,
-    nft
+    nft,
+    dispatch,
+    totalSupply,
+    cost,
+    userBalance,
+    tokenURI
   } = useLoadData();
-
-  const totalSupply = useSelector(state => state.nft.totalSupply)
-  const cost = useSelector(state => state.nft.cost)
-  const userBalance = useSelector(state => state.nft.userBalance)
-  const tokenURI = useSelector(state => state.nft.tokenURI);
 
   const [isWaiting, setIsWaiting] = useState(false)
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  
-  const dispatch = useDispatch()
-
-  const loadData = async () => {
-    try {
-      await Promise.all([
-        loadTotalSupply(provider, nft, dispatch),
-        loadCost(provider, nft, dispatch),
-        loadUserBalance(provider, nft, account, dispatch)
-      ]);
-      setIsDataLoaded(true);
-    } catch (error) {
-      console.error('Error loading data:', error);
-      alert('Error loading data');
-    }
-  };
-
-  const imageUrl = userBalance > 0 ? 
-    `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply+1)%15}.png`
-    : preview;
-
-  useEffect(() => {
-    if (account && nft && !isDataLoaded) {
-      const loadData = async () => {
-        try {
-          await Promise.all([
-            loadTotalSupply(provider, nft, dispatch),
-            loadCost(provider, nft, dispatch),
-            loadUserBalance(provider, nft, account, dispatch),
-          ]);
-          setIsDataLoaded(true);
-        } catch (error) {
-          console.error('Error loading data:', error);
-          alert('Error loading data');
-        }
-      };
-
-      loadData();
-    }
-
-    if (userBalance > 0) {
-      loadTokenURI(provider, nft, totalSupply.toString(), dispatch);
-    }
-  }, [account, nft, userBalance, totalSupply, provider, dispatch, isDataLoaded]);
-
 
   const handleMint = async (e) => {
     e.preventDefault();
@@ -97,6 +49,10 @@ const Mint = () => {
       setIsWaiting(false);
     }
   };
+
+  const imageUrl = userBalance > 0 ? 
+    `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply)%15+2}.png`
+    : preview;
 
   return (
     <Row>
