@@ -33,24 +33,17 @@ const Mint = () => {
   
   const dispatch = useDispatch()
 
-  const loadAccountData = async () => {
+  const loadData = async () => {
     try {
-      await loadAccount(dispatch);
-      await loadUserBalance(provider, nft, account, dispatch);
+      await Promise.all([
+        loadTotalSupply(provider, nft, dispatch),
+        loadCost(provider, nft, dispatch),
+        loadUserBalance(provider, nft, account, dispatch)
+      ]);
       setIsDataLoaded(true);
     } catch (error) {
-      console.error('Error loading account data:', error);
-      alert('Error loading account data');
-    }
-  };
-
-  const loadNFTData = async () => {
-    try {
-      await loadTotalSupply(provider, nft, dispatch);
-      await loadCost(provider, nft, dispatch);
-    } catch (error) {
-      console.error('Error loading NFT data:', error);
-      alert('Error loading NFT data');
+      console.error('Error loading data:', error);
+      alert('Error loading data');
     }
   };
 
@@ -59,11 +52,10 @@ const Mint = () => {
     : preview;
 
   useEffect(() => {
-    if(account && nft) {
-      loadNFTData();
-      loadAccountData();
+    if (account && nft && !isDataLoaded) {
+      loadData();
     }
-  }, [account, nft]);
+  }, [account, nft, isDataLoaded]);
 
   useEffect(() => {
     if (userBalance > 0) {
@@ -79,7 +71,6 @@ const Mint = () => {
       alert('Minting success');
       setIsWaiting(false);
       setIsDataLoaded(false);
-      loadAccountData();
     } catch (error) {
       console.error('Error minting:', error);
       alert('Error minting');
