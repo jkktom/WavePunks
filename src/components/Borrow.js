@@ -10,24 +10,25 @@ import { useLoadData } from './Data';
 
 import {
   loadAllOffers,
+  tokenCurrentStatus,
   cancelLendingOffer,
-  borrowToken,
-  tokenCurrentStatus
+  borrowToken
 } from '../store/interactions'
 
 const Borrow = () => {
   const {
     provider,
     nft,
-    dispatch
+    dispatch,
+    allOffers
   } = useLoadData();
-  
+
 	const [tokenStates, setTokenStates] = useState({});
 	const [latestOffers, setLatestOffers] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-	const offers = useSelector(state => state.nft.offers);
+	const offers = allOffers;
 
 	//Button Handlers
 	  const cancelOffer = async (tokenId) => {
@@ -55,10 +56,7 @@ const Borrow = () => {
 
   const loadData = async () => {
     if (provider && nft) {
-      await Promise.all([
-        loadAllOffers(provider, nft, dispatch),
-        loadTokenStates()
-      ]);
+      await loadTokenStates();
       setIsDataLoaded(true);
       setIsLoading(false);
     }
@@ -68,7 +66,7 @@ const Borrow = () => {
     const newTokenStates = {};
     const updatedOffers = {};
 
-    for (const offer of offers) {
+    for (const offer of allOffers) {
       const tokenId = offer.args.tokenId.toString();
       updatedOffers[tokenId] = offer;
       newTokenStates[tokenId] = await tokenCurrentStatus(provider, nft, tokenId, dispatch);

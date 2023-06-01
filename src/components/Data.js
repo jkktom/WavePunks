@@ -21,15 +21,18 @@ import {
 
 export const useLoadData = () => {
   const dispatch = useDispatch();
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [provider, setProvider] = useState(null);
   const [chainId, setChainId] = useState();
   const [nft, setNft] = useState(null);
-  const [totalSupply, setTotalSupply] = useState(0);
-  const [cost, setCost] = useState(0);
-  const [userBalance, setUserBalance] = useState(0);
+  const totalSupply = useSelector(state => state.nft.totalSupply);
+  const cost = useSelector(state => state.nft.cost);
+  const userBalance = useSelector(state => state.nft.userBalance);
   const [tokenURI, setTokenURI] = useState('');
+  const [tokenStates, setTokenStates] = useState({});
+  const [latestOffers, setLatestOffers] = useState({});
+  const [allOffers, setAllOffers] = useState([]);
 
   // const account = useSelector(state => state.provider.account);
   const [account, setAccount] = useState('');
@@ -45,7 +48,7 @@ export const useLoadData = () => {
         const loadedNFT = await loadNFT(loadedProvider, loadedChainId, dispatch);
           setNft(loadedNFT);
 
-        // Check if an account was previously connected and saved in localStorage
+      // Loading Accounts 
         const savedAccount = localStorage.getItem("connectedAccount");
         let resultAccount;
         if (savedAccount) {
@@ -62,22 +65,19 @@ export const useLoadData = () => {
 
       //Total Supply, Cost, User Balance, Token URI
         const loadedTotalSupply = await loadTotalSupply(loadedProvider, loadedNFT, dispatch);
-        setTotalSupply(loadedTotalSupply);
 
-        const loadedCost = await loadCost(loadedProvider, loadedNFT, dispatch);
-        setCost(loadedCost);
+        await loadCost(loadedProvider, loadedNFT, dispatch);
 
-        let loadedUserBalance = 0;
         if (account && loadedNFT) {
-          loadedUserBalance = await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
+          await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
         }
-        setUserBalance(loadedUserBalance);
 
         const loadedTokenURI = await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
         setTokenURI(loadedTokenURI);
 
       //Load offers
-        const loadedOffers = null
+        const loadedAllOffers = await loadAllOffers(loadedProvider, loadedNFT, dispatch);
+        setAllOffers(loadedAllOffers);
 
       setIsLoading(false);
     } catch (error) {
@@ -102,6 +102,7 @@ export const useLoadData = () => {
     totalSupply,
     cost,
     userBalance,
+    allOffers,
     tokenURI
   };
 };

@@ -15,12 +15,6 @@ import { useLoadData } from './Data';
 
 
 function App() {
-  const {
-    provider,
-    chainId,
-    nft,
-    account
-  } = useLoadData();
 
   // Reload page when network changes
   window.ethereum.on('chainChanged', () => {
