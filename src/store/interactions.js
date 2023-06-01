@@ -184,17 +184,16 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
 
   // ------------------------------------------------------------------------------
   // Cancel Lending OFFERS
-
   export const cancelLendingOffer = async (provider, nft, tokenId, dispatch) => {
     try {
-      dispatch(cancelRequest())
-      const signer = await provider.getSigner()
+      dispatch(cancelRequest());
+      const signer = await provider.getSigner();
       const transaction = await nft.connect(signer).cancelLendingOffer(tokenId);
-      await transaction.wait()
-      dispatch(cancelSuccess(transaction.hash))
+      await transaction.wait();
+      dispatch(cancelSuccess(transaction.hash));
     } catch (error) {
-      console.error(error); 
-      dispatch(cancelFail())
+      console.error(error);
+      throw new Error('Failed to cancel lending offer.');
     }
   };
 

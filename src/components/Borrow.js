@@ -25,17 +25,17 @@ const Borrow = () => {
   } = useLoadData();
 
 
-	//Button Handlers
-	  const cancelOffer = async (tokenId) => {
-	    try {
-	      await cancelLendingOffer(provider, nft, tokenId, dispatch);
-	      alert('Lending offer cancelled successfully');
-		    window.location.reload();
-	    } catch (error) {
-	      console.error('Error cancelling lending offer:', error);
-	      alert('Error cancelling lending offer');
-	    }
-	  };
+	// Cancel Lending OFFERS
+    const cancelOffer = async (tokenId) => {
+      try {
+        await cancelLendingOffer(provider, nft, tokenId, dispatch);
+        alert('Lending offer successfully cancelled');
+        window.location.reload();
+      } catch (error) {
+        console.error('Error cancelling lending offer:', error);
+        alert('Failed to cancel lending offer.');
+      }
+    };
 
 	  const borrowHandler = async (tokenId) => {
 	    try {
