@@ -86,7 +86,6 @@ const CreateOffer = () => {
 	  setRedemptionPeriod(totalSeconds);  // Update actual value only if input is valid
 	};
 
-	useEffect(() => {
 	  const loadData = async () => {
 	    try {
 	      if (provider && nft && account && !isTokenFetched) {
@@ -96,9 +95,7 @@ const CreateOffer = () => {
 
 	      if (tokenIdsOfAccount.length > 0) {
 	        setTokenIds(tokenIdsOfAccount.map(tokenId => tokenId.toString()));
-	        if (!tokenIdsOfAccount.includes(tokenId)) {
-					  setTokenId(tokenIdsOfAccount[0].toString());
-					}
+	        // setTokenId(tokenIdsOfAccount[0].toString());
 	        setImageUrls(tokenIdsOfAccount.map(tokenId => getImageUrl(parseInt(tokenId))));
 	      }
 	    } catch (error) {
@@ -106,6 +103,8 @@ const CreateOffer = () => {
 	      alert('Error loading data');
 	    }
 	  };
+	  
+	useEffect(() => {
 
 	  loadData();
 	}, [provider, nft, account, dispatch, isTokenFetched, tokenIdsOfAccount]);
