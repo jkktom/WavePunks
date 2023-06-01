@@ -96,7 +96,9 @@ const CreateOffer = () => {
 
 	      if (tokenIdsOfAccount.length > 0) {
 	        setTokenIds(tokenIdsOfAccount.map(tokenId => tokenId.toString()));
-	        setTokenId(tokenIdsOfAccount[0].toString());
+	        if (!tokenIdsOfAccount.includes(tokenId)) {
+					  setTokenId(tokenIdsOfAccount[0].toString());
+					}
 	        setImageUrls(tokenIdsOfAccount.map(tokenId => getImageUrl(parseInt(tokenId))));
 	      }
 	    } catch (error) {
