@@ -13,13 +13,6 @@ import Status from './Status';
 
 import { useLoadData } from './Data';
 
-import {
-  loadProvider,
-  loadNetwork,
-  loadAccount,
-  loadNFT
-} from '../store/interactions'
-
 
 function App() {
   const {
@@ -29,27 +22,10 @@ function App() {
     account
   } = useLoadData();
 
-  const dispatch = useDispatch()
-  const [isLoading, setIsLoading] = useState(false)
-
-  const loadBlockchainData = async () => {
-
-    setIsLoading(true)
-    // Initiate provider
-
-    // Reload page when network changes
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload()
-    })
-
-    setIsLoading(false)
-  }
-
-  useEffect(() => {
-    if (!isLoading) {
-      loadBlockchainData()
-    }
-  }, [isLoading]);
+  // Reload page when network changes
+  window.ethereum.on('chainChanged', () => {
+    window.location.reload()
+  })
 
   return(
     <Container>
