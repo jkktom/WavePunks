@@ -7,12 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 import {
-  loadAccount,
-  mint,
-  loadTotalSupply, 
-  loadCost, 
-  loadTokenURI, 
-  loadUserBalance
+  mint
 } from '../store/interactions'
 
 import { useLoadData } from './Data';

@@ -86,12 +86,6 @@ const CreateOffer = () => {
 	  setRedemptionPeriod(totalSeconds);  // Update actual value only if input is valid
 	};
 
-	const getImageUrl = (tokenId) => {
-	  return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
-	};
-
-	
-
 	useEffect(() => {
 	  const loadData = async () => {
 	    try {
@@ -114,6 +108,10 @@ const CreateOffer = () => {
 	  loadData();
 	}, [provider, nft, account, dispatch, isTokenFetched, tokenIdsOfAccount]);
 
+
+	const getImageUrl = (tokenId) => {
+	  return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
+	};
 
   return (
 	  <div>

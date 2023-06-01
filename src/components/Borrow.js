@@ -6,6 +6,8 @@ import { ethers } from 'ethers'
 
 import Loading from './Loading';
 
+import { useLoadData } from './Data';
+
 import {
   loadAllOffers,
   cancelLendingOffer,
@@ -14,38 +16,42 @@ import {
 } from '../store/interactions'
 
 const Borrow = () => {
+  const {
+    provider,
+    nft,
+    dispatch
+  } = useLoadData();
+  
 	const [tokenStates, setTokenStates] = useState({});
 	const [latestOffers, setLatestOffers] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-	const provider = useSelector(state => state.provider.connection)
 
-	const nft = useSelector(state => state.nft.contract);
 	const offers = useSelector(state => state.nft.offers);
-  const dispatch = useDispatch();	
 
-  const cancelOffer = async (tokenId) => {
-    try {
-      await cancelLendingOffer(provider, nft, tokenId, dispatch);
-      alert('Lending offer cancelled successfully');
-	    window.location.reload();
-    } catch (error) {
-      console.error('Error cancelling lending offer:', error);
-      alert('Error cancelling lending offer');
-    }
-  };
+	//Button Handlers
+	  const cancelOffer = async (tokenId) => {
+	    try {
+	      await cancelLendingOffer(provider, nft, tokenId, dispatch);
+	      alert('Lending offer cancelled successfully');
+		    window.location.reload();
+	    } catch (error) {
+	      console.error('Error cancelling lending offer:', error);
+	      alert('Error cancelling lending offer');
+	    }
+	  };
 
-  const borrowHandler = async (tokenId) => {
-    try {
-    	const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
-      await borrowToken(provider, nft, tokenId, offer.args.deposit, dispatch);
-      alert('Successfully Borrowed NFT ');
-	    window.location.reload();
-    } catch (error) {
-      console.error('Error Borrwing:', error);
-      alert('Error Borrowing');
-    }
-  };
+	  const borrowHandler = async (tokenId) => {
+	    try {
+	    	const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+	      await borrowToken(provider, nft, tokenId, offer.args.deposit, dispatch);
+	      alert('Successfully Borrowed NFT ');
+		    window.location.reload();
+	    } catch (error) {
+	      console.error('Error Borrwing:', error);
+	      alert('Error Borrowing');
+	    }
+	  };
 
   const loadData = async () => {
     if (provider && nft) {
