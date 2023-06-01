@@ -38,8 +38,10 @@ export const useLoadData = () => {
   const [tokenStates, setTokenStates] = useState({});
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
+  const [imageUrls, setImageUrls] = useState({});
   const [latestOffers, setLatestOffers] = useState({});
   const [isOffersDataLoaded, setIsOffersDataLoaded] = useState(false);
+  const [isMintedTokensDataLoaded, setIsMintedTokensDataLoaded] = useState(false);
 //-------------------------------------------------
   //Loading Offers
     const loadOffersData = async () => {
@@ -64,7 +66,71 @@ export const useLoadData = () => {
       }
     };
 //-------------------------------------------------
-  //Loading Tokens and status
+  //Loading Status and owners
+
+
+  const setTokenStatus = (tokenId, status) => {
+    setStatus(prevStatus => ({ ...prevStatus, [tokenId]: status }));
+  }
+  const checkCurrentOwner = async (tokenId) => {
+    const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
+    setOwner(prevOwner => ({ ...prevOwner, [tokenId]: currentOwner }));
+  };
+
+  const getImageUrl = (tokenId) => {
+    return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
+  };
+
+  //Optimistic Feature Using Javascript
+  const checkStatus = async (tokenId) => {
+    //Fetch from the smartContract - result
+    const result = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+    /* 0: 'Initialized',
+       1: 'Lending is Open',
+       2: 'In Lending Period',
+       3: 'Lending Expired',
+       4: 'Token Seized' */
+    if (result === 'Initialized'
+      || result === 'Lending is Open'
+      || result === 'Lending Expired'
+      || result === 'Token Seized'
+    ) {
+      setTokenStatus(tokenId, result);
+    } else if (result === 'In Lending Period') {
+      setTokenStatus(tokenId, result);
+      const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+      if (offer) {
+        const currentTime = Math.floor(Date.now() / 1000); // Get the current time in seconds
+        const lendingExpiration = offer.args.lendingExpiration.toNumber();
+        const redemptionDeadline = lendingExpiration + offer.args.redemptionPeriod.toNumber();
+        if (currentTime > lendingExpiration) {
+          if (currentTime > redemptionDeadline ) {
+            setTokenStatus(tokenId, 'Token Seized');
+          } else {
+            setTokenStatus(tokenId, 'Lending Expired');
+          }
+        } else{
+          setTokenStatus(tokenId, result);
+        } 
+      } else {
+        setTokenStatus(tokenId, 'Initialized');
+      }
+    };
+  }
+
+
+  const loadTokens = async () => {
+    for (const token of mintedTokens) {
+      try {
+        await checkStatus(token.args.tokenId.toString());
+        await checkCurrentOwner(token.args.tokenId.toString());
+        setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
+      } catch (error) {
+        console.error('Error loading token:', error);
+      }
+    }
+  };
+
    
 //-------------------------------------------------
   //Loading Blockchain
@@ -100,10 +166,20 @@ export const useLoadData = () => {
           await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
         }
         //load Token URI
-        await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
+        if (loadedTotalSupply !== 0) {
+          await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
+        }
         //load Minted Tokens
-        await loadAllMintedTokens(loadedProvider, loadedNFT, dispatch);
+        if (mintedTokens.length == 0) {
+          await loadAllMintedTokens(loadedProvider, loadedNFT, dispatch);
+        }
       
+      //Load Minted Tokens
+      if (!isMintedTokensDataLoaded) {
+        await loadTokens();
+        setIsMintedTokensDataLoaded(true);
+      }
+
       //Loading offers
       if (!isOffersDataLoaded) {
         await loadOffersData();
@@ -111,6 +187,7 @@ export const useLoadData = () => {
       }
 
       setIsDataLoaded(true);
+
       setIsLoading(false);
 
     } catch (error) {
@@ -137,6 +214,7 @@ export const useLoadData = () => {
     offers,
     owner,
     status,
+    imageUrls,
     mintedTokens,
     tokenStates,
     latestOffers,
