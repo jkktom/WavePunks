@@ -23,30 +23,29 @@ export const useLoadData = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [provider, setProvider] = useState(null);
-  const [chainId, setChainId] = useState();
-  const [nft, setNft] = useState(null);
+
+  const provider = useSelector(state => state.provider.connection);
+  const chainId = useSelector(state => state.provider.chainId);
+  const account = useSelector(state => state.provider.account);
+  const nft = useSelector(state => state.nft.contract);
+
   const totalSupply = useSelector(state => state.nft.totalSupply);
   const cost = useSelector(state => state.nft.cost);
   const userBalance = useSelector(state => state.nft.userBalance);
-  const [tokenURI, setTokenURI] = useState('');
+  const tokenURI = useSelector(state => state.nft.tokenURI);
   const [tokenStates, setTokenStates] = useState({});
   const [latestOffers, setLatestOffers] = useState({});
   const [allOffers, setAllOffers] = useState([]);
 
   // const account = useSelector(state => state.provider.account);
-  const [account, setAccount] = useState('');
 
   const loadBlockchainData = async () => {
     setIsLoading(true)
     try {
       //Load Provider, chainId, loadNFT
         const loadedProvider = await loadProvider(dispatch);
-          setProvider(loadedProvider);
         const loadedChainId = await loadNetwork(loadedProvider, dispatch);
-          setChainId(loadedChainId);
         const loadedNFT = await loadNFT(loadedProvider, loadedChainId, dispatch);
-          setNft(loadedNFT);
 
       // Loading Accounts 
         const savedAccount = localStorage.getItem("connectedAccount");
@@ -61,19 +60,17 @@ export const useLoadData = () => {
           const loadedAccount = await loadAccount(dispatch);
           resultAccount = loadedAccount;
         }
-        setAccount(resultAccount);
 
       //Total Supply, Cost, User Balance, Token URI
         const loadedTotalSupply = await loadTotalSupply(loadedProvider, loadedNFT, dispatch);
-
+        //load Cost
         await loadCost(loadedProvider, loadedNFT, dispatch);
-
+        //load User Balance
         if (account && loadedNFT) {
           await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
         }
-
-        const loadedTokenURI = await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
-        setTokenURI(loadedTokenURI);
+        //load Token URI
+        await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
 
       //Load offers
         const loadedAllOffers = await loadAllOffers(loadedProvider, loadedNFT, dispatch);
@@ -91,7 +88,6 @@ export const useLoadData = () => {
       loadBlockchainData()
     }
   }, [isLoading]);
-
 
   return {
     provider,

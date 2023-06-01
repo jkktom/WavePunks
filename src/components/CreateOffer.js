@@ -9,15 +9,24 @@ import { DateTime, Duration } from "luxon";
 
 import Loading from './Loading';
 
-
 import { 
 	createLendingOffer,
 	loadFetchedTokensOfAccount 
 } from '../store/interactions';
 
+import { useLoadData } from './Data';
+
 import MaskedInput from './Mask';
 
 const CreateOffer = () => {
+  const {
+    provider,
+    account,
+    nft,
+    dispatch,
+    userBalance
+  } = useLoadData();
+
   const [tokenId, setTokenId] = useState('');
   const [tokenIds, setTokenIds] = useState([]);
   const [imageUrls, setImageUrls] = useState([]);
@@ -29,14 +38,10 @@ const CreateOffer = () => {
 	const [inputError, setInputError] = useState(false);
 	const [isTokenFetched, setIsTokenFetched] = useState(false);
 
-  const provider = useSelector(state => state.provider.connection)
-  const account = useSelector(state => state.provider.account);
 	
-	const nft = useSelector(state => state.nft.contract);
 	const isCreating = useSelector(state => state.nft.creating.isCreating);
 	const isSuccess = useSelector(state => state.nft.creating.isSuccess);
 	const tokenIdsOfAccount = useSelector(state => state.nft.fetchedTokensOfAccount);
-  const dispatch = useDispatch()	
 
   const handleSubmit = async (event) => {
     event.preventDefault();

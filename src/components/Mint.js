@@ -23,8 +23,7 @@ const Mint = () => {
     dispatch,
     totalSupply,
     cost,
-    userBalance,
-    tokenURI
+    userBalance
   } = useLoadData();
 
   const [isWaiting, setIsWaiting] = useState(false)
