@@ -11,6 +11,8 @@ import Borrow from './Borrow';
 import CreateOffer from './CreateOffer';
 import Status from './Status';
 
+import { useLoadData } from './Data';
+
 import {
   loadProvider,
   loadNetwork,
@@ -20,35 +22,25 @@ import {
 
 
 function App() {
+  const {
+    provider,
+    chainId,
+    nft,
+    account
+  } = useLoadData();
 
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
 
   const loadBlockchainData = async () => {
+
     setIsLoading(true)
     // Initiate provider
-
-    // Fetch current network's chainId (e.g. hardhat: 31337, kovan: 42)
-    const provider = await loadProvider(dispatch)
-    const chainId = await loadNetwork(provider, dispatch)
 
     // Reload page when network changes
     window.ethereum.on('chainChanged', () => {
       window.location.reload()
     })
-
-    // Check if an account was previously connected and saved in localStorage
-    const savedAccount = localStorage.getItem("connectedAccount");
-    if (savedAccount) {
-      await window.ethereum.request({
-        method: "eth_requestAccounts",
-        params: [{ eth_accounts: [savedAccount] }],
-      });
-      await loadAccount(dispatch);
-    }
-
-    // Initiate contract
-    await loadNFT(provider, chainId, dispatch)
 
     setIsLoading(false)
   }
