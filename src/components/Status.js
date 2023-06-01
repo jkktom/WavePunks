@@ -77,7 +77,6 @@ const Status = () => {
     };
   }
 
-
   const loadTokens = async () => {
     const statusPromises = mintedTokens && mintedTokens.map((token, index) => {
       return Promise.all([
