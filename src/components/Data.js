@@ -34,32 +34,40 @@ export const useLoadData = () => {
   const userBalance = useSelector(state => state.nft.userBalance);
   const tokenURI = useSelector(state => state.nft.tokenURI);
   const offers = useSelector(state => state.nft.offers);
+  const mintedTokens = useSelector(state => state.nft.mintedTokens);
   const [tokenStates, setTokenStates] = useState({});
+  const [status, setStatus] = useState('');
+  const [owner, setOwner] = useState('');
   const [latestOffers, setLatestOffers] = useState({});
   const [isOffersDataLoaded, setIsOffersDataLoaded] = useState(false);
-
-  const loadOffersData = async () => {
-    if (provider && nft) {
-      try {
-        for (const offer of offers) {
-          const tokenId = offer.args.tokenId.toString();
-          const status = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
-          setLatestOffers(prevState => ({
-            ...prevState,
-            [tokenId]: offer
-          }));
-          setTokenStates(prevState => ({
-            ...prevState,
-            [tokenId]: status
-          }));
+//-------------------------------------------------
+  //Loading Offers
+    const loadOffersData = async () => {
+      if (provider && nft) {
+        try {
+          for (const offer of offers) {
+            const tokenId = offer.args.tokenId.toString();
+            const status = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+            setLatestOffers(prevState => ({
+              ...prevState,
+              [tokenId]: offer
+            }));
+            setTokenStates(prevState => ({
+              ...prevState,
+              [tokenId]: status
+            }));
+          }
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error fetching token status:', error);
         }
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching token status:', error);
       }
-    }
-  };
-
+    };
+//-------------------------------------------------
+  //Loading Tokens and status
+   
+//-------------------------------------------------
+  //Loading Blockchain
   const loadBlockchainData = async () => {
     try {
       setIsLoading(true)
@@ -93,7 +101,8 @@ export const useLoadData = () => {
         }
         //load Token URI
         await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
-
+        //load Minted Tokens
+        await loadAllMintedTokens(loadedProvider, loadedNFT, dispatch);
       
       //Loading offers
       if (!isOffersDataLoaded) {
@@ -126,6 +135,9 @@ export const useLoadData = () => {
     cost,
     userBalance,
     offers,
+    owner,
+    status,
+    mintedTokens,
     tokenStates,
     latestOffers,
     tokenURI,

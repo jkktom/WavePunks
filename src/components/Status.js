@@ -22,32 +22,22 @@ const Status = () => {
     provider,
     nft,
     dispatch,
-    // offers,
-    // tokenStates,
-    // latestOffers,
+    offers,
+    mintedTokens,
     tokenURI
   } = useLoadData();
+
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
 
-	const mintedTokens = useSelector(state => state.nft.mintedTokens);
-  const offers = useSelector(state => state.nft.offers);
-
-  const claimNFT = async (tokenId) => {
-    try {
-      await claimToken(provider, nft, tokenId, dispatch)
-      alert('Claiming Done. Token Initialized');
-      window.location.reload();
-    } catch (error) {
-      console.error('Error Claiming:', error);
-      alert('Error Claiming');
-    }
-  };
-
   const setTokenStatus = (tokenId, status) => {
     setStatus(prevStatus => ({ ...prevStatus, [tokenId]: status }));
   }
+  const checkCurrentOwner = async (tokenId) => {
+    const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
+    setOwner(prevOwner => ({ ...prevOwner, [tokenId]: currentOwner }));
+  };
 
 
   //Optimistic Feature Using Javascript
@@ -86,24 +76,9 @@ const Status = () => {
       }
     };
   }
-  const redeemHandler = async (tokenId) => {
-    try {
-      const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
-      await redeemToken(provider, nft, tokenId, offer.args.deposit, dispatch);
-      alert('Successfully Redeemed NFT ');
-    } catch (error) {
-      console.error('Error Redeemed:', error);
-      alert('Error Redeemed');
-    }
-  };
 
-  const checkCurrentOwner = async (tokenId) => {
-    const currentOwner = await fetchOwnerOfToken(provider, nft, tokenId, dispatch);
-    setOwner(prevOwner => ({ ...prevOwner, [tokenId]: currentOwner }));
-  };
 
   const loadTokens = async () => {
-    await loadAllMintedTokens(provider, nft, dispatch);
     const statusPromises = mintedTokens && mintedTokens.map((token, index) => {
       return Promise.all([
         checkStatus(token.args.tokenId.toString()),
@@ -119,17 +94,12 @@ const Status = () => {
     }
   }, [provider, nft, dispatch]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (mintedTokens.length > 0) {
       setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
     }
   }, [mintedTokens]);
   
-  useEffect(() => {
-    if (provider && nft) {
-      loadAllOffers(provider, nft, dispatch);
-    }
-  }, [provider, nft, dispatch]);
 
   const css = {
 	  textAlign: 'center',
@@ -137,6 +107,28 @@ const Status = () => {
 	};
   const badgeCss = {
     fontSize: '16px', // adjust the value as needed
+  };
+
+  const claimNFT = async (tokenId) => {
+    try {
+      await claimToken(provider, nft, tokenId, dispatch)
+      alert('Claiming Done. Token Initialized');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error Claiming:', error);
+      alert('Error Claiming');
+    }
+  };
+
+  const redeemHandler = async (tokenId) => {
+    try {
+      const offer = offers.find((offer) => offer.args.tokenId.toString() === tokenId);
+      await redeemToken(provider, nft, tokenId, offer.args.deposit, dispatch);
+      alert('Successfully Redeemed NFT ');
+    } catch (error) {
+      console.error('Error Redeemed:', error);
+      alert('Error Redeemed');
+    }
   };
 
   const getStatusVariant = (status) => {
