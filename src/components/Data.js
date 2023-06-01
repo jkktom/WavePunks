@@ -40,30 +40,30 @@ export const useLoadData = () => {
 
   const loadOffersData = async () => {
     if (provider && nft) {
-      for (const offer of offers) {
-        const tokenId = offer.args.tokenId.toString();
-        tokenCurrentStatus(provider, nft, tokenId, dispatch)
-          .then((status) => {
-            setLatestOffers((prevState) => ({
-              ...prevState,
-              [tokenId]: offer
-            }));
-            setTokenStates((prevState) => ({
-              ...prevState,
-              [tokenId]: status
-            }));
-          })
-          .catch((error) => {
-            console.error('Error fetching token status:', error);
-          });
+      try {
+        for (const offer of offers) {
+          const tokenId = offer.args.tokenId.toString();
+          const status = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
+          setLatestOffers(prevState => ({
+            ...prevState,
+            [tokenId]: offer
+          }));
+          setTokenStates(prevState => ({
+            ...prevState,
+            [tokenId]: status
+          }));
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching token status:', error);
       }
-      setIsLoading(false);
     }
   };
 
   const loadBlockchainData = async () => {
-    setIsLoading(true)
     try {
+      setIsLoading(true)
+
       //Load Provider, chainId, loadNFT
         const loadedProvider = await loadProvider(dispatch);
         const loadedChainId = await loadNetwork(loadedProvider, dispatch);
@@ -94,11 +94,15 @@ export const useLoadData = () => {
         //load Token URI
         await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
 
+      
       //Loading offers
+      if (!isOffersDataLoaded) {
+        await loadOffersData();
+        setIsOffersDataLoaded(true);
+      }
 
-
-      setIsLoading(false);
       setIsDataLoaded(true);
+      setIsLoading(false);
 
     } catch (error) {
       console.error('Error loading blockchain data:', error);
@@ -110,15 +114,7 @@ export const useLoadData = () => {
     if (!isDataLoaded) {
       loadBlockchainData();
     }
-  }, [isDataLoaded]);
-
-    
-  useEffect(() => {
-    if (!isOffersDataLoaded) {
-      loadOffersData();
-      setIsOffersDataLoaded(true);
-    }
-  }, [isOffersDataLoaded]);
+  }, [isDataLoaded, isOffersDataLoaded]);
 
   return {
     provider,

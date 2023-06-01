@@ -5,25 +5,34 @@ import Button from 'react-bootstrap/Button';
 
 import Loading from './Loading';
 
+import { useLoadData } from './Data';
+
 import {
   loadAllOffers,
   tokenCurrentStatus,
   fetchOwnerOfToken,
+  loadAllMintedTokens,
+
   redeemToken,
-  claimToken,
-  loadAllMintedTokens
+  claimToken
 } from '../store/interactions'
 
 const Status = () => {
+  const {
+    provider,
+    nft,
+    dispatch,
+    // offers,
+    // tokenStates,
+    // latestOffers,
+    tokenURI
+  } = useLoadData();
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
-	const provider = useSelector(state => state.provider.connection)
 
-	const nft = useSelector(state => state.nft.contract);
 	const mintedTokens = useSelector(state => state.nft.mintedTokens);
   const offers = useSelector(state => state.nft.offers);
-  const dispatch = useDispatch();	
 
   const claimNFT = async (tokenId) => {
     try {
@@ -40,9 +49,6 @@ const Status = () => {
     setStatus(prevStatus => ({ ...prevStatus, [tokenId]: status }));
   }
 
-  const getImageUrl = (tokenId) => {
-    return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
-  };
 
   //Optimistic Feature Using Javascript
   const checkStatus = async (tokenId) => {
@@ -150,6 +156,9 @@ const Status = () => {
     }
   };
 
+  const getImageUrl = (tokenId) => {
+    return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
+  };
 
 	return (
     <div>
