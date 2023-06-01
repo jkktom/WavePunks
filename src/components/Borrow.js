@@ -9,7 +9,6 @@ import Loading from './Loading';
 import { useLoadData } from './Data';
 
 import {
-  loadAllOffers,
   tokenCurrentStatus,
   cancelLendingOffer,
   borrowToken
@@ -20,15 +19,13 @@ const Borrow = () => {
     provider,
     nft,
     dispatch,
-    allOffers
+    offers
   } = useLoadData();
 
 	const [tokenStates, setTokenStates] = useState({});
 	const [latestOffers, setLatestOffers] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-	const offers = allOffers;
 
 	//Button Handlers
 	  const cancelOffer = async (tokenId) => {
@@ -66,7 +63,7 @@ const Borrow = () => {
     const newTokenStates = {};
     const updatedOffers = {};
 
-    for (const offer of allOffers) {
+    for (const offer of offers) {
       const tokenId = offer.args.tokenId.toString();
       updatedOffers[tokenId] = offer;
       newTokenStates[tokenId] = await tokenCurrentStatus(provider, nft, tokenId, dispatch);

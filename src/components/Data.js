@@ -33,9 +33,9 @@ export const useLoadData = () => {
   const cost = useSelector(state => state.nft.cost);
   const userBalance = useSelector(state => state.nft.userBalance);
   const tokenURI = useSelector(state => state.nft.tokenURI);
+  const offers = useSelector(state => state.nft.offers);
   const [tokenStates, setTokenStates] = useState({});
   const [latestOffers, setLatestOffers] = useState({});
-  const [allOffers, setAllOffers] = useState([]);
 
   // const account = useSelector(state => state.provider.account);
 
@@ -74,7 +74,6 @@ export const useLoadData = () => {
 
       //Load offers
         const loadedAllOffers = await loadAllOffers(loadedProvider, loadedNFT, dispatch);
-        setAllOffers(loadedAllOffers);
 
       setIsLoading(false);
     } catch (error) {
@@ -98,7 +97,7 @@ export const useLoadData = () => {
     totalSupply,
     cost,
     userBalance,
-    allOffers,
+    offers,
     tokenURI
   };
 };
