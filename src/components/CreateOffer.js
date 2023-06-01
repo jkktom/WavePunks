@@ -130,7 +130,8 @@ const CreateOffer = () => {
 								        <strong>Token ID:</strong>
 								    </Form.Label>
 								    <div className="col-sm-6">
-								        <Form.Control as="select" value={tokenId} onChange={(e) => setTokenId(e.target.value)}>
+
+								        <Form.Control as="select" value={tokenId} onChange={(e) => setTokenId(parseInt(e.target.value))}>
 								            {tokenIds.length ? (
 								            	tokenIds.map((tokenId, index) => (
 														    <option key={index} value={tokenId}>
