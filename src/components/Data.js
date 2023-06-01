@@ -36,8 +36,30 @@ export const useLoadData = () => {
   const offers = useSelector(state => state.nft.offers);
   const [tokenStates, setTokenStates] = useState({});
   const [latestOffers, setLatestOffers] = useState({});
+  const [isOffersDataLoaded, setIsOffersDataLoaded] = useState(false);
 
-  // const account = useSelector(state => state.provider.account);
+  const loadOffersData = async () => {
+    if (provider && nft) {
+      for (const offer of offers) {
+        const tokenId = offer.args.tokenId.toString();
+        tokenCurrentStatus(provider, nft, tokenId, dispatch)
+          .then((status) => {
+            setLatestOffers((prevState) => ({
+              ...prevState,
+              [tokenId]: offer
+            }));
+            setTokenStates((prevState) => ({
+              ...prevState,
+              [tokenId]: status
+            }));
+          })
+          .catch((error) => {
+            console.error('Error fetching token status:', error);
+          });
+      }
+      setIsLoading(false);
+    }
+  };
 
   const loadBlockchainData = async () => {
     setIsLoading(true)
@@ -72,10 +94,12 @@ export const useLoadData = () => {
         //load Token URI
         await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
 
-      //Load offers
-        const loadedAllOffers = await loadAllOffers(loadedProvider, loadedNFT, dispatch);
+      //Loading offers
+
 
       setIsLoading(false);
+      setIsDataLoaded(true);
+
     } catch (error) {
       console.error('Error loading blockchain data:', error);
       setIsLoading(false);
@@ -83,10 +107,18 @@ export const useLoadData = () => {
   }
 
   useEffect(() => {
-    if (!isLoading) {
-      loadBlockchainData()
+    if (!isDataLoaded) {
+      loadBlockchainData();
     }
-  }, [isLoading]);
+  }, [isDataLoaded]);
+
+    
+  useEffect(() => {
+    if (!isOffersDataLoaded) {
+      loadOffersData();
+      setIsOffersDataLoaded(true);
+    }
+  }, [isOffersDataLoaded]);
 
   return {
     provider,
@@ -98,6 +130,11 @@ export const useLoadData = () => {
     cost,
     userBalance,
     offers,
-    tokenURI
+    tokenStates,
+    latestOffers,
+    tokenURI,
+    isLoading,
+    isDataLoaded,
+    loadBlockchainData
   };
 };

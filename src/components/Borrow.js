@@ -19,13 +19,13 @@ const Borrow = () => {
     provider,
     nft,
     dispatch,
-    offers
+    offers,
+    tokenStates,
+    latestOffers,
+    tokenURI
   } = useLoadData();
 
-	const [tokenStates, setTokenStates] = useState({});
-	const [latestOffers, setLatestOffers] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
 	//Button Handlers
 	  const cancelOffer = async (tokenId) => {
@@ -50,34 +50,28 @@ const Borrow = () => {
 	      alert('Error Borrowing');
 	    }
 	  };
+	//utilities
+		const formatDate = (timestamp) => {
+		  return new Date(timestamp).toLocaleDateString(undefined, {
+		    year: 'numeric',
+		    month: 'long',
+		    day: 'numeric',
+		    hour: '2-digit',
+		    minute: '2-digit',
+		    hour12: false
+		  });
+		};
 
-  const loadData = async () => {
-    if (provider && nft) {
-      await loadTokenStates();
-      setIsDataLoaded(true);
-      setIsLoading(false);
-    }
-  };
+		const formatRedemptionDuration = (duration) => {
+		  const minutes = Math.floor(duration / 60);
+		  const seconds = duration % 60;
+		  return `${minutes} minutes ${seconds} seconds`;
+		};
 
-  const loadTokenStates = async () => {
-    const newTokenStates = {};
-    const updatedOffers = {};
+		const shortenHash = (hash) => {
+		  return hash.slice(0, 5) + '...' + hash.slice(61, 66);
+		};
 
-    for (const offer of offers) {
-      const tokenId = offer.args.tokenId.toString();
-      updatedOffers[tokenId] = offer;
-      newTokenStates[tokenId] = await tokenCurrentStatus(provider, nft, tokenId, dispatch);
-    }
-
-    setTokenStates(newTokenStates);
-    setLatestOffers(updatedOffers);
-  };
-
-  useEffect(() => {
-    if (!isDataLoaded) {
-      loadData();
-    }
-  }, [isDataLoaded]);
 
   const css = {
 	  textAlign: 'center',
@@ -87,7 +81,7 @@ const Borrow = () => {
 	return (
     <div>
     	{isLoading ? (
-        <Loading />
+	      console.log(`isLoading is: ${isLoading}`)
     	) : (
 	    	<>
 	    		{provider && nft && Object.values(latestOffers).length === 0 ? (
