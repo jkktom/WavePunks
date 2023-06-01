@@ -134,7 +134,11 @@ const CreateOffer = () => {
 								        <Form.Control
 												  as="select"
 												  value={tokenId}
-												  onChange={(e) => setTokenId(parseInt(e.target.value))}
+												  onChange={(e) => {
+										        const selectedTokenId = parseInt(e.target.value);
+										        console.log('Selected Token ID:', selectedTokenId);
+										        setTokenId(selectedTokenId);
+										      }}
 												>
 												  {tokenIds.length ? (
 												    tokenIds.map((tokenId) => (
@@ -146,7 +150,7 @@ const CreateOffer = () => {
 												    <option>No tokens available</option>
 												  )}
 												</Form.Control>
-
+										    <p>Selected Token ID: {tokenId}</p>
 								    </div>
 								</Row>
 
