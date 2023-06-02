@@ -20,7 +20,7 @@ function App() {
   window.ethereum.on('chainChanged', () => {
     window.location.reload()
   })
-
+  
   return(
     <Container>
       <HashRouter>
@@ -33,6 +33,7 @@ function App() {
           <Route path="/offer" element={<CreateOffer />} />
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/status" element={<Status />} />
+          <Route path="" element={<useLoadData />} />
         </Routes>
       </HashRouter>
     </Container>

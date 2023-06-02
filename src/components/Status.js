@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
@@ -9,11 +7,6 @@ import Loading from './Loading';
 import { useLoadData } from './Data';
 
 import {
-  loadAllOffers,
-  tokenCurrentStatus,
-  fetchOwnerOfToken,
-  loadAllMintedTokens,
-
   redeemToken,
   claimToken
 } from '../store/interactions'
@@ -141,7 +134,6 @@ const Status = () => {
       {!provider || !nft && <Loading />}
     </div>
   );
-
 };
 
 export default Status;

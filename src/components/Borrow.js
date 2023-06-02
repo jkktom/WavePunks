@@ -1,10 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers'
-
-import Loading from './Loading';
 
 import { useLoadData } from './Data';
 
@@ -19,9 +15,7 @@ const Borrow = () => {
     nft,
     dispatch,
     offers,
-    tokenStates,
-    latestOffers,
-    tokenURI
+    tokenStates
   } = useLoadData();
 
 

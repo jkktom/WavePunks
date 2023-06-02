@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react';
 import { Row, Col } from 'react-bootstrap'
 import { ethers } from 'ethers'
 
@@ -18,7 +17,6 @@ import preview from '../preview.gif';
 const Mint = () => {
   const {
     provider,
-    account,
     nft,
     dispatch,
     totalSupply,
@@ -27,7 +25,6 @@ const Mint = () => {
   } = useLoadData();
 
   const [isWaiting, setIsWaiting] = useState(false)
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const handleMint = async (e) => {
     e.preventDefault();
@@ -36,7 +33,7 @@ const Mint = () => {
       await mint(provider, nft, dispatch);
       alert('Minting success');
       setIsWaiting(false);
-      setIsDataLoaded(false);
+      window.location.reload();
     } catch (error) {
       console.error('Error minting:', error);
       alert('Error minting');

@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -14,8 +13,6 @@ import {
   loadAllOffers,
   tokenCurrentStatus,
   fetchOwnerOfToken,
-  redeemToken,
-  claimToken,
   loadAllMintedTokens
 } from '../store/interactions';
 
@@ -23,6 +20,8 @@ export const useLoadData = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isOffersDataLoaded, setIsOffersDataLoaded] = useState(false);
+  const [isMintedTokensDataLoaded, setIsMintedTokensDataLoaded] = useState(false);
 
   const provider = useSelector(state => state.provider.connection);
   const chainId = useSelector(state => state.provider.chainId);
@@ -40,8 +39,7 @@ export const useLoadData = () => {
   const [owner, setOwner] = useState('');
   const [imageUrls, setImageUrls] = useState({});
   const [latestOffers, setLatestOffers] = useState({});
-  const [isOffersDataLoaded, setIsOffersDataLoaded] = useState(false);
-  const [isMintedTokensDataLoaded, setIsMintedTokensDataLoaded] = useState(false);
+
 //-------------------------------------------------
   //Loading Offers
     const loadOffersData = async () => {
@@ -118,17 +116,16 @@ export const useLoadData = () => {
     };
   }
 
-
   const loadTokens = async () => {
     for (const token of mintedTokens) {
       try {
         await checkStatus(token.args.tokenId.toString());
         await checkCurrentOwner(token.args.tokenId.toString());
-        setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
       } catch (error) {
         console.error('Error loading token:', error);
       }
     }
+    setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
   };
 
    
@@ -170,9 +167,11 @@ export const useLoadData = () => {
           await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
         }
         //load Minted Tokens
-        if (mintedTokens.length == 0) {
+        if (mintedTokens.length === 0) {
           await loadAllMintedTokens(loadedProvider, loadedNFT, dispatch);
         }
+        //load all offers
+        await loadAllOffers(loadedProvider, loadedNFT, dispatch);
       
       //Load Minted Tokens
       if (!isMintedTokensDataLoaded) {
@@ -221,6 +220,7 @@ export const useLoadData = () => {
     tokenURI,
     isLoading,
     isDataLoaded,
+    isOffersDataLoaded,
     loadBlockchainData
   };
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -9,7 +9,7 @@ import { DateTime, Duration } from "luxon";
 
 import Loading from './Loading';
 
-import { 
+import {
 	createLendingOffer,
 	loadFetchedTokensOfAccount 
 } from '../store/interactions';
@@ -23,8 +23,7 @@ const CreateOffer = () => {
     provider,
     account,
     nft,
-    dispatch,
-    userBalance
+    dispatch
   } = useLoadData();
 
   const [tokenId, setTokenId] = useState('');
@@ -37,10 +36,8 @@ const CreateOffer = () => {
 	const [redemptionPeriodDisplay, setRedemptionPeriodDisplay] = useState("");
 	const [inputError, setInputError] = useState(false);
 	const [isTokenFetched, setIsTokenFetched] = useState(false);
-
 	
 	const isCreating = useSelector(state => state.nft.creating.isCreating);
-	const isSuccess = useSelector(state => state.nft.creating.isSuccess);
 	const tokenIdsOfAccount = useSelector(state => state.nft.fetchedTokensOfAccount);
 
   const handleSubmit = async (event) => {
@@ -54,7 +51,6 @@ const CreateOffer = () => {
 		  });
     try {
     	const depositWei = ethers.utils.parseUnits(deposit, 'ether');
-
 	    const epochLendingStartTime = DateTime.fromFormat(lendingStartTime, "MM-dd-yyyy HH:mm").toSeconds();
 	    const epochLendingExpiration = DateTime.fromFormat(lendingExpiration, "MM-dd-yyyy HH:mm").toSeconds();
 	    
@@ -70,7 +66,7 @@ const CreateOffer = () => {
     	console.log(offerTx)
 
 	    alert('Lending offer created successfully');
-
+	    window.location.reload()
     } catch (error) {
       console.error('Error creating lending offer:', error);
       alert('Error creating lending offer');
