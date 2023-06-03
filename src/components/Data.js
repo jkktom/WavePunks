@@ -20,9 +20,6 @@ import {
 } from '../store/interactions';
 
 export const useLoadData = () => {
-  // const {
-  //   account
-  // } = Navigation();
   
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useEffect } from 'react'
 import Navbar from 'react-bootstrap/Navbar';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
@@ -14,35 +13,32 @@ import config from '../config.json'
 const Navigation = () => {
 
   const {
-    provider,
     chainId,
-    dispatch
+    dispatch,
+    account
   } = useLoadData();
 
-  const account = useSelector(state => state.provider.account);
 
-  const connectedAccount = account;
 
   const connectHandler = async () => {
     await loadAccount(dispatch)
   }
 
-  // Loading Accounts 
-  const savedAccount = localStorage.getItem("connectedAccount");
-  let resultAccount = savedAccount || connectedAccount;
 
   const connectSavedAccount = async () => {
     await window.ethereum.request({
-      method: "eth_requestAccounts",
-      params: [{ eth_accounts: [savedAccount] }],
+      method: 'eth_requestAccounts',
+      params: [
+        { eth_accounts: [localStorage.getItem('connectedAccount')] },
+      ],
     });
   };
 
   useEffect(() => {
-    if (savedAccount) {
+    if (localStorage.getItem('connectedAccount')) {
       connectSavedAccount();
     }
-  }, [savedAccount]);
+  }, []);
 
   const networkHandler = async (e) => {
     await window.ethereum.request({
@@ -74,11 +70,11 @@ const Navigation = () => {
             <option value="0x7A69">Localhost</option>
             <option value="0x13881">Mumbai</option>
           </Form.Select>
-          {connectedAccount ? (
+          {account ? (
             <Navbar.Text className='d-flex align-items-center'>
-              {connectedAccount.slice(0, 5) + '...' + connectedAccount.slice(38, 42)}
+              {account.slice(0, 5) + '...' + account.slice(38, 42)}
               <Blockies
-                seed={connectedAccount}
+                seed={account}
                 size={10}
                 scale={3}
                 color="#2187D0"
