@@ -3,6 +3,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Blockies from 'react-blockies'
+import { useSelector, useDispatch } from 'react-redux'
 
 import logo from '../logo.png';
 import { loadAccount } from '../store/interactions'
@@ -11,19 +12,16 @@ import { useLoadData } from './Data';
 import config from '../config.json'
 
 const Navigation = () => {
+  const account = useSelector(state => state.provider.account);
 
   const {
     chainId,
-    dispatch,
-    account
+    dispatch
   } = useLoadData();
-
-
 
   const connectHandler = async () => {
     await loadAccount(dispatch)
   }
-
 
   const connectSavedAccount = async () => {
     await window.ethereum.request({

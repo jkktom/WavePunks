@@ -26,6 +26,7 @@ export const useLoadData = () => {
   const provider = useSelector(state => state.provider.connection);
   const chainId = useSelector(state => state.provider.chainId);
   const account = useSelector(state => state.provider.account);
+  // const [account, setAccount] = useState({});
   const nft = useSelector(state => state.nft.contract);
 
   const totalSupply = useSelector(state => state.nft.totalSupply);
