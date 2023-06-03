@@ -62,7 +62,7 @@ const Mint = () => {
     };
 
     loadData();
-  }, []); // Empty dependency array to run the effect only once
+  }, [account, userBalance]); // Empty dependency array to run the effect only once
 
   const imageUrl = userBalance > 0 ? 
     `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${(totalSupply)%15+2}.png`
