@@ -22,6 +22,7 @@ function App() {
   })
   
   return(
+  
     <Container>
       <HashRouter>
         <Navigation />
@@ -33,7 +34,6 @@ function App() {
           <Route path="/offer" element={<CreateOffer />} />
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/status" element={<Status />} />
-          <Route path="" element={<useLoadData />} />
         </Routes>
       </HashRouter>
     </Container>

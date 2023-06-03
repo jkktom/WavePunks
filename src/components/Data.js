@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
+// Components
+import Navigation from './Navigation';
+
 import {
   loadProvider,
   loadNetwork,
@@ -17,6 +20,10 @@ import {
 } from '../store/interactions';
 
 export const useLoadData = () => {
+  // const {
+  //   account
+  // } = Navigation();
+  
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -133,61 +140,52 @@ export const useLoadData = () => {
   //Loading Blockchain
   const loadBlockchainData = async () => {
     try {
-      setIsLoading(true)
-
-      //Load Provider, chainId, loadNFT
-        const loadedProvider = await loadProvider(dispatch);
-        const loadedChainId = await loadNetwork(loadedProvider, dispatch);
-        const loadedNFT = await loadNFT(loadedProvider, loadedChainId, dispatch);
-
-      // Loading Accounts 
-        const savedAccount = localStorage.getItem("connectedAccount");
-        let resultAccount;
-        if (savedAccount) {
-          await window.ethereum.request({
-            method: "eth_requestAccounts",
-            params: [{ eth_accounts: [savedAccount] }],
-          });
-          resultAccount = savedAccount;
-        } else {
-          const loadedAccount = await loadAccount(dispatch);
-          resultAccount = loadedAccount;
-        }
-
-      //Total Supply, Cost, User Balance, Token URI
-        const loadedTotalSupply = await loadTotalSupply(loadedProvider, loadedNFT, dispatch);
-        //load Cost
-        await loadCost(loadedProvider, loadedNFT, dispatch);
-        //load User Balance
-        if (account && loadedNFT) {
-          await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
-        }
-        //load Token URI
-        if (loadedTotalSupply !== 0) {
-          await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
-        }
-        //load Minted Tokens
-        if (mintedTokens.length === 0) {
-          await loadAllMintedTokens(loadedProvider, loadedNFT, dispatch);
-        }
-        //load all offers
-        await loadAllOffers(loadedProvider, loadedNFT, dispatch);
-      
-      //Load Minted Tokens
-      if (!isMintedTokensDataLoaded) {
-        await loadTokens();
-        setIsMintedTokensDataLoaded(true);
+      if(isDataLoaded){
+        return;
       }
+        setIsLoading(true)
 
-      //Loading offers
-      if (!isOffersDataLoaded) {
-        await loadOffersData();
-        setIsOffersDataLoaded(true);
-      }
+        //Load Provider, chainId, loadNFT
+          const loadedProvider = await loadProvider(dispatch);
+          const loadedChainId = await loadNetwork(loadedProvider, dispatch);
+          const loadedNFT = await loadNFT(loadedProvider, loadedChainId, dispatch);
 
-      setIsDataLoaded(true);
+        
 
-      setIsLoading(false);
+        //Total Supply, Cost, User Balance, Token URI
+          const loadedTotalSupply = await loadTotalSupply(loadedProvider, loadedNFT, dispatch);
+          //load Cost
+          await loadCost(loadedProvider, loadedNFT, dispatch);
+          //load User Balance
+          if (account && loadedNFT) {
+            await loadUserBalance(loadedProvider, loadedNFT, account, dispatch);
+          }
+          //load Token URI
+          if (loadedTotalSupply !== 0) {
+            await loadTokenURI(loadedProvider, loadedNFT, loadedTotalSupply.toString(), dispatch);
+          }
+          //load Minted Tokens
+          if (mintedTokens.length === 0) {
+            await loadAllMintedTokens(loadedProvider, loadedNFT, dispatch);
+          }
+          //load all offers
+          await loadAllOffers(loadedProvider, loadedNFT, dispatch);
+        
+        //Load Minted Tokens
+        if (!isMintedTokensDataLoaded) {
+          await loadTokens();
+          setIsMintedTokensDataLoaded(true);
+        }
+
+        //Loading offers
+        if (!isOffersDataLoaded) {
+          await loadOffersData();
+          setIsOffersDataLoaded(true);
+        }
+
+        setIsDataLoaded(true);
+        setIsLoading(false);
+
 
     } catch (error) {
       console.error('Error loading blockchain data:', error);
@@ -196,9 +194,7 @@ export const useLoadData = () => {
   }
 
   useEffect(() => {
-    if (!isDataLoaded) {
       loadBlockchainData();
-    }
   }, [isDataLoaded, isOffersDataLoaded]);
 
   return {

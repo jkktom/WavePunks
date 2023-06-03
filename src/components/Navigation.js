@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Navbar from 'react-bootstrap/Navbar';
 import Form from 'react-bootstrap/Form'
@@ -6,18 +7,42 @@ import Blockies from 'react-blockies'
 
 import logo from '../logo.png';
 import { loadAccount } from '../store/interactions'
+import { useLoadData } from './Data';
 
 import config from '../config.json'
 
 const Navigation = () => {
-  const chainId = useSelector(state => state.provider.chainId)
-  const connectedAccount = useSelector(state => state.provider.account)
 
-  const dispatch = useDispatch()
+  const {
+    provider,
+    chainId,
+    dispatch
+  } = useLoadData();
+
+  const account = useSelector(state => state.provider.account);
+
+  const connectedAccount = account;
 
   const connectHandler = async () => {
     await loadAccount(dispatch)
   }
+
+  // Loading Accounts 
+  const savedAccount = localStorage.getItem("connectedAccount");
+  let resultAccount = savedAccount || connectedAccount;
+
+  const connectSavedAccount = async () => {
+    await window.ethereum.request({
+      method: "eth_requestAccounts",
+      params: [{ eth_accounts: [savedAccount] }],
+    });
+  };
+
+  useEffect(() => {
+    if (savedAccount) {
+      connectSavedAccount();
+    }
+  }, [savedAccount]);
 
   const networkHandler = async (e) => {
     await window.ethereum.request({
@@ -25,6 +50,7 @@ const Navigation = () => {
       params: [{ chainId: e.target.value }],
     })
   }
+
   return (
     <Navbar className='my-3'>
       <img

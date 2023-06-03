@@ -36,6 +36,7 @@ const CreateOffer = () => {
 	const [redemptionPeriodDisplay, setRedemptionPeriodDisplay] = useState("");
 	const [inputError, setInputError] = useState(false);
 	const [isTokenFetched, setIsTokenFetched] = useState(false);
+	const [isToken0Set, setIsToken0Set] = useState(false);
 	
 	const isCreating = useSelector(state => state.nft.creating.isCreating);
 	const tokenIdsOfAccount = useSelector(state => state.nft.fetchedTokensOfAccount);
@@ -93,10 +94,12 @@ const CreateOffer = () => {
 	        await loadFetchedTokensOfAccount(provider, nft, account, dispatch);
 	        setIsTokenFetched(true);
 	      }
-
 	      if (tokenIdsOfAccount.length > 0) {
 	        setTokenIds(tokenIdsOfAccount.map(tokenId => tokenId.toString()));
-	        // setTokenId(tokenIdsOfAccount[0].toString());
+		      if (!isToken0Set){
+		        setTokenId(tokenIdsOfAccount[0].toString());
+		        setIsToken0Set(true);
+		      }
 	        setImageUrls(tokenIdsOfAccount.map(tokenId => getImageUrl(parseInt(tokenId))));
 	      }
 	    } catch (error) {
@@ -106,10 +109,8 @@ const CreateOffer = () => {
 	  };
 	  
 	useEffect(() => {
-
 	  loadData();
 	}, [provider, nft, account, dispatch, isTokenFetched, tokenIdsOfAccount]);
-
 
 	const getImageUrl = (tokenId) => {
 	  return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
@@ -117,7 +118,6 @@ const CreateOffer = () => {
 
   return (
 	  <div>
-	  
 	    <Card style={{ maxWidth: '450px' }} className='mx-auto px-4'>
 	      {account ? (
 	        <Form onSubmit={handleSubmit} style={{ maxWidth: '450px', margin: '50px auto' }}>
