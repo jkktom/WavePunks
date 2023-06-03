@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
-// Components
-import Navigation from './Navigation';
-
 import {
   loadProvider,
   loadNetwork,
-  loadAccount,
   loadNFT,
   loadTotalSupply,
   loadCost,
@@ -20,7 +16,7 @@ import {
 } from '../store/interactions';
 
 export const useLoadData = () => {
-  
+
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
   const [isDataLoaded, setIsDataLoaded] = useState(false);

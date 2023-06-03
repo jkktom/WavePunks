@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
 
@@ -21,8 +20,6 @@ function App() {
     isOffersDataLoaded, 
     loadBlockchainData 
   } = useLoadData();
-  
-  const dispatch = useDispatch();
 
   useEffect(() => {
       loadBlockchainData();

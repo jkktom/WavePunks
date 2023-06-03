@@ -10,7 +10,7 @@ import {
   redeemToken,
   claimToken
 } from '../store/interactions'
-
+ 
 const Status = () => {
   const {
     provider,
@@ -21,7 +21,6 @@ const Status = () => {
     status,
     imageUrls,
     mintedTokens,
-    tokenURI
   } = useLoadData();
 
 
