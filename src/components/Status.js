@@ -17,14 +17,12 @@ const Status = () => {
     nft,
     dispatch,
     offers,
+    imageUrls,
     owner,
     status,
     mintedTokens,
   } = useLoadData();
 
-  const getImageUrl = (tokenId) => {
-    return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
-  };
 
   const claimNFT = async (tokenId) => {
     try {
@@ -93,12 +91,16 @@ const Status = () => {
               <tr key={index}>
                 <td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>
-                  <img
-                    src={getImageUrl(token.args.tokenId.toString())}
-                    alt="Wave NFTs"
-                    width="69px"
-                    height="69px"
-                  />
+                  {imageUrls.length ? (
+                    imageUrls.map((imageUrl, index) => (
+                      <img
+                        src={imageUrl}
+                        alt="Wave NFTs"
+                        width="69px"
+                        height="69px"
+                      />
+                    ))
+                  ):"img here"}
                 </td>
                 <td style={css}>
                   {token.args.minter && (
