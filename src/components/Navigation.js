@@ -45,16 +45,23 @@ const Navigation = () => {
     })
   }
 
-  return (
-    <Navbar className='my-3'>
-      <img
-        alt="logo"
-        src={logo}
-        width="40"
-        height="40"
-        className="d-inline-block align-top mx-3"
-      />
-      <Navbar.Brand href="#">Wave NFTs</Navbar.Brand>
+      return (
+        <Navbar className='my-3'>
+          <img
+            alt="logo"
+            src={logo}
+            width="69"
+            height="69"
+            className="d-inline-block align-top mx-3"
+          />
+          <div>
+              <Navbar.Brand href="#">Wave NFTs</Navbar.Brand>
+              <br/>
+              <a href="https://mumbai.polygonscan.com/address/0xbaa337f086026B21DAE2c6599ee756f3fb3857CF" target="_blank" rel="noopener noreferrer">
+                <div>0xbaa337f086026B21DAE2c6599ee756f3fb3857CF</div>
+              </a>
+                <div>(polygon mumbai)</div>
+            </div>
       <Navbar.Collapse className="justify-content-end">
         
         <div className="d-flex justify-content-end mt-3">
