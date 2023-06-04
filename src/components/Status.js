@@ -119,7 +119,7 @@ const Status = () => {
                 <td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>
                   <img
-                    src={imageUrls[token.args.tokenId.toString()-1]}
+                    src={imageUrls[token.args.tokenId.toString()+14]}
                     alt="Wave NFTs"
                     width="69px"
                     height="69px"
