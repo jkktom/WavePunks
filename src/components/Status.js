@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
@@ -13,13 +12,10 @@ import {
 } from '../store/interactions'
  
 const Status = () => {
-  const [imageUrls, setImageUrls] = useState({});
-
   const {
     provider,
     nft,
     dispatch,
-    account,
     offers,
     owner,
     status,
@@ -29,27 +25,6 @@ const Status = () => {
   const getImageUrl = (tokenId) => {
     return `https://gray-artificial-meerkat-560.mypinata.cloud/ipfs/QmPko9KCjW4dY9jadapcjuG3BXjNmQJCTR2dgbAd3bALWb/${((tokenId + 1) % 15) + 1}.png`;
   };
-
-  const loadTokens = async () => {
-    if (provider && nft && account) {
-      try {
-        for (const token of mintedTokens) {
-          setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
-        } 
-      } catch (error) {
-        console.error('Error loading token:', error);
-      }
-    }
-  }
-
-  useEffect(() => {
-    loadTokens();
-  }, [
-    provider, 
-    nft, 
-    account, 
-    dispatch
-  ]);
 
   const claimNFT = async (tokenId) => {
     try {
@@ -119,7 +94,7 @@ const Status = () => {
                 <td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>
                   <img
-                    src={imageUrls[token.args.tokenId.toString()+14]}
+                    src={getImageUrl(token.args.tokenId.toString()-1)}
                     alt="Wave NFTs"
                     width="69px"
                     height="69px"

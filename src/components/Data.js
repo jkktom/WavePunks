@@ -126,7 +126,7 @@ export const useLoadData = () => {
         console.error('Error loading token:', error);
       }
     }
-    setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
+    // setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId))));
   };
 
    
