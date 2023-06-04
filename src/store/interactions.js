@@ -226,12 +226,11 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
 
     const allMintedTokens = await nft.queryFilter('Mint', startBlock, block)
     const mintedTokens = allMintedTokens.map(event => {
-      return event.args.tokenId; 
+      return { hash: event.transactionHash, args:event.args }
     })
 
     dispatch(mintedTokensLoaded(mintedTokens))
-
-    return mintedTokens;
+    
   }
 
   //------------------------------------------------------------------------------

@@ -91,16 +91,12 @@ const Status = () => {
               <tr key={index}>
                 <td style={css}>{token.args.tokenId.toString()}</td>
                 <td style={css}>
-                  {imageUrls.length ? (
-                    imageUrls.map((imageUrl, index) => (
-                      <img
-                        src={imageUrl}
-                        alt="Wave NFTs"
-                        width="69px"
-                        height="69px"
-                      />
-                    ))
-                  ):"img here"}
+                  <img
+                    src={imageUrls[index]}
+                    alt="Wave NFTs"
+                    width="69px"
+                    height="69px"
+                  />
                 </td>
                 <td style={css}>
                   {token.args.minter && (

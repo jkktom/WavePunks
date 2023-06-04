@@ -38,7 +38,7 @@ export const useLoadData = () => {
   const [tokenStates, setTokenStates] = useState({});
   const [status, setStatus] = useState('');
   const [owner, setOwner] = useState('');
-  const [imageUrls, setImageUrls] = useState([]);
+  const [imageUrls, setImageUrls] = useState({});
   const [latestOffers, setLatestOffers] = useState({});
 
 //-------------------------------------------------
@@ -126,7 +126,7 @@ export const useLoadData = () => {
         console.error('Error loading token:', error);
       }
     }
-    setImageUrls(mintedTokens.map(token => getImageUrl(parseInt(token.args.tokenId))));
+    setImageUrls(mintedTokens.map((token) => getImageUrl(parseInt(token.args.tokenId.toString()))));
   };
 
    
@@ -143,8 +143,6 @@ export const useLoadData = () => {
           const loadedProvider = await loadProvider(dispatch);
           const loadedChainId = await loadNetwork(loadedProvider, dispatch);
           const loadedNFT = await loadNFT(loadedProvider, loadedChainId, dispatch);
-
-        
 
         //Total Supply, Cost, User Balance, Token URI
           const loadedTotalSupply = await loadTotalSupply(loadedProvider, loadedNFT, dispatch);
