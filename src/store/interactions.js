@@ -228,9 +228,7 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
     const mintedTokens = allMintedTokens.map(event => {
       return { hash: event.transactionHash, args:event.args }
     })
-
     dispatch(mintedTokensLoaded(mintedTokens))
-    
   }
 
   //------------------------------------------------------------------------------
@@ -305,21 +303,3 @@ export const loadFetchedTokensOfAccount = async (provider, nft, account, dispatc
       dispatch(claimFail())
     }
   };
-//xxxxxxxx
-// ------------------------------------------------------------------------------
-  // XXXXXXXXX
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
