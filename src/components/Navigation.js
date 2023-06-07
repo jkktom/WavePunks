@@ -60,7 +60,12 @@ const Navigation = () => {
               <a href="https://mumbai.polygonscan.com/address/0xbaa337f086026B21DAE2c6599ee756f3fb3857CF" target="_blank" rel="noopener noreferrer">
                 <div>0xbaa337f086026B21DAE2c6599ee756f3fb3857CF</div>
               </a>
-                <div>(polygon mumbai)</div>
+              <a href="https://chainlist.org/?search=mumbai&testnets=true" target="_blank" rel="noopener noreferrer">
+                <div><i>(Click here to add Network : Polygon Mumbai)</i></div>
+              </a>
+              <a href="https://faucet.polygon.technology/" target="_blank" rel="noopener noreferrer">
+                <div><i>(Get some test $MATIC)</i></div>
+              </a>
             </div>
       <Navbar.Collapse className="justify-content-end">
         
